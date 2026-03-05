@@ -1,65 +1,84 @@
-import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-white">
+      <nav className="border-b">
+        <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
+          <span className="font-bold text-lg">FeedbackIQ</span>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm text-gray-600 hover:text-black">
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-5xl mx-auto px-4">
+        <section className="py-24 text-center">
+          <h1 className="text-5xl font-bold tracking-tight mb-4">
+            Turn user feedback<br />into pull requests
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            Drop a widget on your site. Collect feedback from users.
+            Our AI agent reads your codebase and creates a PR — automatically.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/signup"
+            className="inline-block bg-black text-white px-8 py-3 rounded-md text-lg hover:bg-gray-800"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Start for free
+          </Link>
+        </section>
+
+        <section className="py-16">
+          <div className="grid grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-3xl mb-3">1</div>
+              <h3 className="font-semibold mb-2">Add the widget</h3>
+              <p className="text-sm text-gray-600">
+                One script tag on your site. Users see a feedback button in the corner.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl mb-3">2</div>
+              <h3 className="font-semibold mb-2">Collect feedback</h3>
+              <p className="text-sm text-gray-600">
+                Users describe what they want changed. The more detail, the better the PR.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl mb-3">3</div>
+              <h3 className="font-semibold mb-2">Review the PR</h3>
+              <p className="text-sm text-gray-600">
+                Our AI reads your codebase, makes the changes, and opens a pull request.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 text-center border-t">
+          <h2 className="text-2xl font-bold mb-4">Ready to ship faster?</h2>
+          <Link
+            href="/signup"
+            className="inline-block bg-black text-white px-8 py-3 rounded-md hover:bg-gray-800"
           >
-            Documentation
-          </a>
-        </div>
+            Get started
+          </Link>
+        </section>
       </main>
+
+      <footer className="border-t py-8">
+        <div className="max-w-5xl mx-auto px-4 text-center text-sm text-gray-500">
+          FeedbackIQ
+        </div>
+      </footer>
     </div>
   );
 }
