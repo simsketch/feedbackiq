@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { runAgent } from "@/lib/agent";
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin") || "*";
@@ -47,7 +48,15 @@ export async function POST(request: Request) {
     },
   });
 
-  // TODO: If auto-generate is on, trigger agent worker (Task 10)
+  if (project.autoGeneratePrs) {
+    runAgent(feedback.id).catch(async (err) => {
+      console.error("Agent error:", err);
+      await prisma.feedback.update({
+        where: { id: feedback.id },
+        data: { status: "new" },
+      });
+    });
+  }
 
   return NextResponse.json(
     { id: feedback.id, status: feedback.status },

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { runAgent } from "@/lib/agent";
 
 export async function POST(
   _request: Request,
@@ -36,6 +37,13 @@ export async function POST(
     data: { status: "generating" },
   });
 
-  // Agent will be wired up in Task 10
+  runAgent(id).catch(async (err) => {
+    console.error("Agent error:", err);
+    await prisma.feedback.update({
+      where: { id },
+      data: { status: "new" },
+    });
+  });
+
   return NextResponse.json({ status: "generating" });
 }
