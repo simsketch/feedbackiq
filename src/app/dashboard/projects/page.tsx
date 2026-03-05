@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export default async function ProjectsPage() {
-  const session = await auth();
-  if (!session) redirect("/login");
+  const user = await getAuthUser();
+  if (!user) redirect("/login");
 
   const projects = await prisma.project.findMany({
-    where: { companyId: (session.user as any).companyId },
+    where: { companyId: user.companyId },
     include: { _count: { select: { feedback: true } } },
     orderBy: { createdAt: "desc" },
   });

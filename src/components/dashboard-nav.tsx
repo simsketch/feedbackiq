@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useClerk } from "@clerk/nextjs";
 
 const navItems = [
   { label: "Overview", href: "/dashboard" },
@@ -12,6 +12,7 @@ const navItems = [
 
 export default function DashboardNav() {
   const pathname = usePathname();
+  const { signOut } = useClerk();
 
   return (
     <nav className="border-b bg-white">
@@ -48,7 +49,7 @@ export default function DashboardNav() {
           </ul>
         </div>
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ redirectUrl: "/" })}
           className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
         >
           Logout

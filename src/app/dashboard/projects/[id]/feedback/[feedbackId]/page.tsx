@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import GeneratePrButton from "@/components/generate-pr-button";
@@ -18,13 +18,13 @@ export default async function FeedbackDetailPage({
 }: {
   params: Promise<{ id: string; feedbackId: string }>;
 }) {
-  const session = await auth();
-  if (!session) redirect("/login");
+  const user = await getAuthUser();
+  if (!user) redirect("/login");
 
   const { id, feedbackId } = await params;
 
   const project = await prisma.project.findFirst({
-    where: { id, companyId: (session.user as any).companyId },
+    where: { id, companyId: user.companyId },
   });
 
   if (!project) notFound();

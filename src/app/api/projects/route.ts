@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const session = await auth();
-  if (!session) {
+  const user = await getAuthUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const projects = await prisma.project.findMany({
-    where: { companyId: (session.user as any).companyId },
+    where: { companyId: user.companyId },
     include: { _count: { select: { feedback: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -18,8 +18,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session) {
+  const user = await getAuthUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
   const project = await prisma.project.create({
     data: {
-      companyId: (session.user as any).companyId,
+      companyId: user.companyId,
       name,
       githubRepo,
       defaultBranch: defaultBranch || "main",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const statusBadgeClasses: Record<string, string> = {
@@ -23,8 +23,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default async function DashboardPage() {
-  const session = await auth();
-  const companyId = (session!.user as any).companyId as string;
+  const user = await getAuthUser();
+  const companyId = user!.companyId;
 
   const [projectCount, feedbackCount, prCount, recentFeedback] =
     await Promise.all([

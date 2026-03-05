@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export default async function SettingsPage() {
-  const session = await auth();
-  const companyId = (session!.user as any).companyId as string;
+  const user = await getAuthUser();
+  const companyId = user!.companyId;
 
   const company = await prisma.company.findUnique({
     where: { id: companyId },
