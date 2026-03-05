@@ -4,12 +4,15 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["feedbackiq"]
 }
 
 enum UserRole {
   owner
   admin
   member
+
+  @@schema("feedbackiq")
 }
 
 enum FeedbackStatus {
@@ -18,6 +21,8 @@ enum FeedbackStatus {
   generating
   pr_created
   closed
+
+  @@schema("feedbackiq")
 }
 
 enum PullRequestStatus {
@@ -25,6 +30,8 @@ enum PullRequestStatus {
   open
   merged
   closed
+
+  @@schema("feedbackiq")
 }
 
 model Company {
@@ -36,6 +43,8 @@ model Company {
 
   users    User[]
   projects Project[]
+
+  @@schema("feedbackiq")
 }
 
 model User {
@@ -49,6 +58,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   company Company @relation(fields: [companyId], references: [id])
+
+  @@schema("feedbackiq")
 }
 
 model Project {
@@ -64,6 +75,8 @@ model Project {
 
   company  Company    @relation(fields: [companyId], references: [id])
   feedback Feedback[]
+
+  @@schema("feedbackiq")
 }
 
 model Feedback {
@@ -78,6 +91,8 @@ model Feedback {
 
   project      Project       @relation(fields: [projectId], references: [id])
   pullRequests PullRequest[]
+
+  @@schema("feedbackiq")
 }
 
 model PullRequest {
@@ -92,4 +107,6 @@ model PullRequest {
   updatedAt       DateTime          @updatedAt
 
   feedback Feedback @relation(fields: [feedbackId], references: [id])
+
+  @@schema("feedbackiq")
 }
