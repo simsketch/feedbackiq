@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  owner
+  admin
+  member
+}
+
+enum FeedbackStatus {
+  new
+  reviewing
+  generating
+  pr_created
+  closed
+}
+
+enum PullRequestStatus {
+  pending
+  open
+  merged
+  closed
+}
+
+model Company {
+  id                    String    @id @default(uuid())
+  name                  String
+  githubInstallationId  Int?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  users    User[]
+  projects Project[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  companyId String
+  email     String   @unique
+  name      String?
+  password  String
+  role      UserRole @default(member)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+}
+
+model Project {
+  id               String   @id @default(uuid())
+  companyId        String
+  name             String
+  githubRepo       String
+  defaultBranch    String   @default("main")
+  autoGeneratePrs  Boolean  @default(false)
+  siteKey          String   @unique @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  company  Company    @relation(fields: [companyId], references: [id])
+  feedback Feedback[]
+}
+
+model Feedback {
+  id             String         @id @default(uuid())
+  projectId      String
+  content        String
+  submitterEmail String?
+  sourceUrl      String?
+  status         FeedbackStatus @default(new)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  project      Project       @relation(fields: [projectId], references: [id])
+  pullRequests PullRequest[]
+}
+
+model PullRequest {
+  id              String            @id @default(uuid())
+  feedbackId      String
+  githubPrUrl     String?
+  githubPrNumber  Int?
+  branchName      String
+  status          PullRequestStatus @default(pending)
+  agentLog        String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  feedback Feedback @relation(fields: [feedbackId], references: [id])
+}
