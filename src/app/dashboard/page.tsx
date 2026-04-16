@@ -102,7 +102,7 @@ export default async function DashboardPage() {
                 No feedback received yet.
               </p>
             ) : (
-              recentFeedback.map((item) => (
+              recentFeedback.map((item: { id: string; content: string; status: string; createdAt: Date; project: { name: string } }) => (
                 <div
                   key={item.id}
                   className="flex items-start justify-between px-6 py-4 gap-4"
