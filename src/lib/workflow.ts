@@ -157,7 +157,7 @@ jobs:
           CALLBACK_URL: \${{ inputs.callback_url }}
           CALLBACK_SECRET: \${{ inputs.callback_secret }}
           GH_TOKEN: \${{ github.token }}
-        run: echo '${scriptBase64}' | base64 -d > /tmp/agent.mjs && NODE_PATH=$PWD/node_modules node /tmp/agent.mjs
+        run: echo '${scriptBase64}' | base64 -d > /tmp/agent.mjs && ln -sfn "$PWD/node_modules" /tmp/node_modules && node /tmp/agent.mjs
 `;
 }
 
@@ -167,27 +167,41 @@ export async function ensureWorkflowInstalled(
   repo: string,
   defaultBranch: string
 ): Promise<boolean> {
+  const desiredContent = buildWorkflowYaml();
+  const desiredBase64 = Buffer.from(desiredContent).toString("base64");
+
+  let existingSha: string | null = null;
+  let existingContent: string | null = null;
   try {
-    await octokit.request(
+    const { data } = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       { owner, repo, path: WORKFLOW_PATH, ref: defaultBranch }
     );
-    return false;
+    if (!Array.isArray(data) && data.type === "file") {
+      existingSha = data.sha;
+      existingContent = Buffer.from(data.content, "base64").toString("utf-8");
+    }
   } catch (err: unknown) {
     const status = (err as { status?: number }).status;
     if (status !== 404) throw err;
   }
 
-  const content = buildWorkflowYaml();
+  if (existingContent === desiredContent) {
+    return false;
+  }
+
   await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
     owner,
     repo,
     path: WORKFLOW_PATH,
-    message: "Add FeedbackIQ agent workflow",
-    content: Buffer.from(content).toString("base64"),
+    message: existingSha
+      ? "Update FeedbackIQ agent workflow"
+      : "Add FeedbackIQ agent workflow",
+    content: desiredBase64,
     branch: defaultBranch,
+    ...(existingSha ? { sha: existingSha } : {}),
   });
-  return true;
+  return existingSha === null;
 }
 
 export async function ensureSecretSet(
