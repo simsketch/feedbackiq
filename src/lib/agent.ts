@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getInstallationOctokit } from "@/lib/github";
 import { createAgentTools } from "@/lib/agent-tools";
 
-const MAX_ITERATIONS = 15;
+const MAX_ITERATIONS = 8;
 const MAX_FILES_CHANGED = 10;
 
 interface FileChange {
@@ -168,7 +168,7 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 16384,
+      max_tokens: 65536,
       system: systemPrompt,
       tools: anthropicTools,
       messages,
