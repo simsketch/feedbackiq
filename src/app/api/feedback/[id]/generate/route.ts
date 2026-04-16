@@ -62,7 +62,7 @@ export async function POST(
   }
 
   try {
-    await ensureWorkflowInstalled(octokit, owner, repo, project.defaultBranch);
+    const justCreated = await ensureWorkflowInstalled(octokit, owner, repo, project.defaultBranch);
     await ensureSecretSet(octokit, owner, repo);
 
     await prisma.feedback.update({
@@ -80,7 +80,8 @@ export async function POST(
       feedback.content,
       feedback.sourceUrl,
       project.defaultBranch,
-      callbackUrl
+      callbackUrl,
+      justCreated
     );
   } catch (err) {
     console.error("Failed to trigger workflow:", err);
@@ -89,7 +90,7 @@ export async function POST(
       data: { status: "new" },
     });
     return NextResponse.json(
-      { error: "Failed to trigger PR generation workflow" },
+      { error: `Failed to trigger PR generation workflow: ${err instanceof Error ? err.message : String(err)}` },
       { status: 500 }
     );
   }

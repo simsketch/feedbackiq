@@ -179,16 +179,13 @@ export async function ensureWorkflowInstalled(
   owner: string,
   repo: string,
   defaultBranch: string
-): Promise<void> {
-  let existingSha: string | undefined;
+): Promise<boolean> {
   try {
-    const { data } = await octokit.request(
+    await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       { owner, repo, path: WORKFLOW_PATH, ref: defaultBranch }
     );
-    if (!Array.isArray(data) && "sha" in data) {
-      existingSha = data.sha;
-    }
+    return false; // already exists
   } catch (err: unknown) {
     const status = (err as { status?: number }).status;
     if (status !== 404) throw err;
@@ -199,13 +196,11 @@ export async function ensureWorkflowInstalled(
     owner,
     repo,
     path: WORKFLOW_PATH,
-    message: existingSha
-      ? "Update FeedbackIQ agent workflow"
-      : "Add FeedbackIQ agent workflow",
+    message: "Add FeedbackIQ agent workflow",
     content: Buffer.from(content).toString("base64"),
     branch: defaultBranch,
-    ...(existingSha ? { sha: existingSha } : {}),
   });
+  return true; // newly created
 }
 
 export async function ensureSecretSet(
@@ -248,6 +243,10 @@ export async function ensureSecretSet(
   );
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function triggerWorkflow(
   octokit: Octokit,
   owner: string,
@@ -256,28 +255,46 @@ export async function triggerWorkflow(
   feedbackContent: string,
   sourceUrl: string | null,
   defaultBranch: string,
-  callbackUrl: string
+  callbackUrl: string,
+  justCreated: boolean = false
 ): Promise<void> {
   const callbackSecret = process.env.GITHUB_APP_WEBHOOK_SECRET;
   if (!callbackSecret) {
     throw new Error("GITHUB_APP_WEBHOOK_SECRET is not set");
   }
 
-  await octokit.request(
-    "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
-    {
-      owner,
-      repo,
-      workflow_id: "feedbackiq-agent.yml",
-      ref: defaultBranch,
-      inputs: {
-        feedback_id: feedbackId,
-        feedback_content: feedbackContent,
-        source_url: sourceUrl || "",
-        default_branch: defaultBranch,
-        callback_url: callbackUrl,
-        callback_secret: callbackSecret,
-      },
+  const maxAttempts = justCreated ? 5 : 1;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    if (justCreated && attempt > 1) {
+      await sleep(5000);
     }
-  );
+
+    try {
+      await octokit.request(
+        "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
+        {
+          owner,
+          repo,
+          workflow_id: "feedbackiq-agent.yml",
+          ref: defaultBranch,
+          inputs: {
+            feedback_id: feedbackId,
+            feedback_content: feedbackContent,
+            source_url: sourceUrl || "",
+            default_branch: defaultBranch,
+            callback_url: callbackUrl,
+            callback_secret: callbackSecret,
+          },
+        }
+      );
+      return;
+    } catch (err: unknown) {
+      const status = (err as { status?: number }).status;
+      if (status === 422 && attempt < maxAttempts) {
+        continue;
+      }
+      throw err;
+    }
+  }
 }
