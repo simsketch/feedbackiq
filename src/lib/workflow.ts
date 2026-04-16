@@ -1,7 +1,7 @@
 import type { Octokit } from "@octokit/core";
 import sodium from "libsodium-wrappers";
 
-const WORKFLOW_PATH = ".github/workflows/feedbackiq-agent.yml";
+const WORKFLOW_PATH = ".github/workflows/feedbackiq.yml";
 const SECRET_NAME = "FEEDBACKIQ_ANTHROPIC_KEY";
 
 function buildWorkflowYaml(): string {
@@ -276,7 +276,7 @@ export async function triggerWorkflow(
         {
           owner,
           repo,
-          workflow_id: "feedbackiq-agent.yml",
+          workflow_id: "feedbackiq.yml",
           ref: defaultBranch,
           inputs: {
             feedback_id: feedbackId,
