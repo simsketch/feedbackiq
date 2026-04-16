@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getInstallationOctokit } from "@/lib/github";
 import { createAgentTools } from "@/lib/agent-tools";
 
-const MAX_ITERATIONS = 20;
+const MAX_ITERATIONS = 15;
 const MAX_FILES_CHANGED = 10;
 
 interface FileChange {
@@ -19,7 +19,6 @@ export async function runAgent(feedbackId: string): Promise<void> {
     agentLog.push(msg);
   };
 
-  // 1. Fetch feedback with project and company
   const feedback = await prisma.feedback.findUnique({
     where: { id: feedbackId },
     include: {
@@ -34,23 +33,35 @@ export async function runAgent(feedbackId: string): Promise<void> {
   const { project } = feedback;
   const { company } = project;
 
-  // 2. Verify GitHub is connected
   if (!company.githubInstallationId) {
     throw new Error("GitHub is not connected for this company");
   }
 
   const octokit = await getInstallationOctokit(company.githubInstallationId);
 
-  // 3. Split githubRepo into owner/repo
   const [owner, repo] = project.githubRepo.split("/");
   if (!owner || !repo) {
     throw new Error(`Invalid githubRepo format: ${project.githubRepo}`);
   }
 
-  // 4. Create agent tools
   const tools = createAgentTools(octokit, owner, repo);
 
-  // 5. Define Anthropic tools
+  // Get repo tree upfront to give the agent context
+  let repoTree = "";
+  try {
+    const { data: treeData } = await octokit.request(
+      "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+      { owner, repo, tree_sha: project.defaultBranch, recursive: "1" }
+    );
+    repoTree = treeData.tree
+      .filter((t: { type: string }) => t.type === "blob")
+      .map((t: { path: string }) => t.path)
+      .join("\n");
+    log(`Loaded repo tree: ${treeData.tree.length} entries`);
+  } catch (err) {
+    log(`Failed to load repo tree: ${err instanceof Error ? err.message : "unknown"}`);
+  }
+
   const anthropicTools: Anthropic.Tool[] = [
     {
       name: "read_file",
@@ -62,22 +73,6 @@ export async function runAgent(feedbackId: string): Promise<void> {
           path: {
             type: "string",
             description: "File path relative to repo root",
-          },
-        },
-        required: ["path"],
-      },
-    },
-    {
-      name: "list_directory",
-      description:
-        "List the contents of a directory in the repository. Returns file and directory names (directories end with /).",
-      input_schema: {
-        type: "object" as const,
-        properties: {
-          path: {
-            type: "string",
-            description:
-              'Directory path relative to repo root. Use "" for the root.',
           },
         },
         required: ["path"],
@@ -137,31 +132,31 @@ export async function runAgent(feedbackId: string): Promise<void> {
     },
   ];
 
-  // 6. System prompt
   const systemPrompt = `You are a code agent that reads a GitHub repository and proposes file changes to address user feedback.
 
 Repository: ${owner}/${repo} (default branch: ${project.defaultBranch})
 
-Your task is to analyze the following user feedback and propose concrete code changes to address it.
-Explore the repository structure, read relevant files, and then propose specific changes.
+IMPORTANT INSTRUCTIONS:
+- You have a MAXIMUM of ${MAX_ITERATIONS} tool calls total. Be efficient.
+- Do NOT waste iterations listing directories. The full file tree is provided below.
+- Read only the files you need (2-5 files typically), then propose changes.
+- You MUST call propose_changes before your iterations run out.
+- If the feedback is unclear, make your best interpretation and propose something reasonable.
+- You may change at most ${MAX_FILES_CHANGED} files.
+- Keep changes minimal and focused on the feedback.
 
-Rules:
-- You may change at most ${MAX_FILES_CHANGED} files
-- Only propose changes you are confident about
-- If you cannot determine what to change, call propose_changes with an empty changes array
-- Keep changes minimal and focused on the feedback
-- Always read relevant files before proposing changes
+FILE TREE:
+${repoTree || "(failed to load - use read_file with paths you can infer)"}
 
-User feedback:
+USER FEEDBACK:
 ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.sourceUrl}` : ""}${feedback.submitterEmail ? `\nSubmitter: ${feedback.submitterEmail}` : ""}`;
 
-  // 7. Agent loop
   const anthropic = new Anthropic();
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
       content:
-        "Please explore the repository and propose changes to address the feedback described in the system prompt. Start by listing the root directory.",
+        "Read the most relevant files based on the file tree and user feedback, then propose changes. Be efficient — you have limited iterations.",
     },
   ];
 
@@ -169,23 +164,31 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
   let prSummary = "";
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
-    log(`Iteration ${i + 1}`);
+    log(`Iteration ${i + 1}/${MAX_ITERATIONS}`);
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 4096,
+      max_tokens: 16384,
       system: systemPrompt,
       tools: anthropicTools,
       messages,
     });
 
-    // Check if the model wants to use tools
     if (response.stop_reason === "end_turn") {
       log("Agent finished without proposing changes");
       break;
     }
 
-    // Process tool calls
+    if (response.stop_reason === "max_tokens") {
+      log("Response hit max_tokens - asking agent to continue with smaller changes");
+      messages.push({ role: "assistant", content: response.content });
+      messages.push({
+        role: "user",
+        content: "Your response was cut off due to length. Please propose changes for fewer files, or split into smaller changes.",
+      });
+      continue;
+    }
+
     const assistantContent = response.content;
     messages.push({ role: "assistant", content: assistantContent });
 
@@ -204,12 +207,6 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
             const input = block.input as { path: string };
             const content = await tools.readFile(input.path);
             result = content;
-            break;
-          }
-          case "list_directory": {
-            const input = block.input as { path: string };
-            const entries = await tools.listDirectory(input.path);
-            result = entries.join("\n");
             break;
           }
           case "search_code": {
@@ -262,9 +259,16 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
     messages.push({ role: "user", content: toolResults });
 
     if (proposedChanges !== null) break;
+
+    // Nudge the agent if running low on iterations
+    if (i === MAX_ITERATIONS - 3 && proposedChanges === null) {
+      messages.push({
+        role: "user",
+        content: "You are running low on iterations. Please propose your changes NOW using propose_changes, even if they are imperfect.",
+      });
+    }
   }
 
-  // 8. No changes proposed
   if (!proposedChanges || proposedChanges.length === 0) {
     log("No changes proposed - closing feedback");
     await prisma.feedback.update({
@@ -282,17 +286,14 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
     return;
   }
 
-  // 9. Create branch, commit files, open PR
   const branchName = `feedbackiq/feedback-${feedbackId.slice(0, 8)}`;
 
-  // Get base SHA from default branch
   const { data: refData } = await octokit.request(
     "GET /repos/{owner}/{repo}/git/ref/{ref}",
     { owner, repo, ref: `heads/${project.defaultBranch}` }
   );
   const baseSha = refData.object.sha;
 
-  // Create branch
   await octokit.request("POST /repos/{owner}/{repo}/git/refs", {
     owner,
     repo,
@@ -301,9 +302,7 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
   });
   log(`Created branch: ${branchName}`);
 
-  // Commit each file change via Contents API
   for (const change of proposedChanges) {
-    // Try to get the existing file's SHA for updates
     let fileSha: string | undefined;
     try {
       const { data: existingFile } = await octokit.request(
@@ -314,7 +313,7 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
         fileSha = existingFile.sha;
       }
     } catch {
-      // File doesn't exist yet - that's fine for new files
+      // File doesn't exist yet
     }
 
     await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
@@ -329,7 +328,6 @@ ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.source
     log(`Committed: ${change.path}`);
   }
 
-  // Create PR
   const prTitle = `[FeedbackIQ] ${feedback.content.slice(0, 72)}${feedback.content.length > 72 ? "..." : ""}`;
   const prBody = `## Feedback
 
@@ -343,7 +341,7 @@ ${feedback.submitterEmail ? `**Submitter:** ${feedback.submitterEmail}` : ""}
 ${prSummary}
 
 ---
-*This PR was automatically generated by [FeedbackIQ](https://feedbackiq.dev).*`;
+*This PR was automatically generated by [FeedbackIQ](https://feedbackiq.app).*`;
 
   const { data: pr } = await octokit.request(
     "POST /repos/{owner}/{repo}/pulls",
@@ -358,7 +356,6 @@ ${prSummary}
   );
   log(`Created PR #${pr.number}: ${pr.html_url}`);
 
-  // Create PullRequest record
   await prisma.pullRequest.create({
     data: {
       feedbackId,
@@ -370,7 +367,6 @@ ${prSummary}
     },
   });
 
-  // Update feedback status
   await prisma.feedback.update({
     where: { id: feedbackId },
     data: { status: "pr_created" },
