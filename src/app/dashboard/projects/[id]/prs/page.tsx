@@ -9,6 +9,7 @@ const statusBadge: Record<string, string> = {
   merged: "bg-purple-500/10 text-purple-400",
   pending: "bg-amber-500/10 text-amber-400",
   closed: "bg-zinc-500/10 text-zinc-400",
+  failed: "bg-red-500/10 text-red-400",
 };
 
 export default async function PullRequestsPage({

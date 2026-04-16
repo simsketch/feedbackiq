@@ -36,6 +36,8 @@ export async function GET(
     (pr) => pr.status === "pending"
   );
 
+  let flippedToTerminal = false;
+
   if (pendingPrs.length > 0 && company.githubInstallationId) {
     const [owner, repo] = project.githubRepo.split("/");
     if (owner && repo) {
@@ -51,7 +53,7 @@ export async function GET(
               await prisma.pullRequest.update({
                 where: { id: pr.id },
                 data: {
-                  status: "closed",
+                  status: "failed",
                   agentLog:
                     (pr.agentLog || "") +
                     "\n[auto] No workflow run detected after " +
@@ -59,6 +61,7 @@ export async function GET(
                     " minutes.",
                 },
               });
+              flippedToTerminal = true;
             }
             continue;
           }
@@ -86,7 +89,7 @@ export async function GET(
             await prisma.pullRequest.update({
               where: { id: pr.id },
               data: {
-                status: "closed",
+                status: "failed",
                 agentLog:
                   (pr.agentLog || "") +
                   "\n[auto] Workflow run " +
@@ -94,6 +97,7 @@ export async function GET(
                   ".",
               },
             });
+            flippedToTerminal = true;
           }
         }
       } catch (err) {
@@ -115,7 +119,7 @@ export async function GET(
   if (
     feedback.status === "generating" &&
     !openPrExists &&
-    isStaleGenerating
+    (flippedToTerminal || isStaleGenerating)
   ) {
     await prisma.feedback.update({
       where: { id: feedback.id },
