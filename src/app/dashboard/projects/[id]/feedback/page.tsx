@@ -55,7 +55,7 @@ export default async function FeedbackListPage({
         </div>
       ) : (
         <div className="space-y-4">
-          {feedback.map((item) => (
+          {feedback.map((item: { id: string; content: string; submitterEmail: string | null; createdAt: Date; status: string }) => (
             <Link
               key={item.id}
               href={`/dashboard/projects/${project.id}/feedback/${item.id}`}

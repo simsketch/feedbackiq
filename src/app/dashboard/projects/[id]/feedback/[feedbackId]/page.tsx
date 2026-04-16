@@ -115,7 +115,7 @@ export default async function FeedbackDetailPage({
               Pull Requests
             </h2>
             <div className="space-y-3">
-              {feedback.pullRequests.map((pr) => (
+              {feedback.pullRequests.map((pr: { id: string; branchName: string; githubPrUrl: string | null; githubPrNumber: number | null; status: string }) => (
                 <div
                   key={pr.id}
                   className="rounded-xl border border-zinc-800 p-4"

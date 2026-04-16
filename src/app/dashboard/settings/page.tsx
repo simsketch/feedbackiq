@@ -82,7 +82,7 @@ export default async function SettingsPage() {
           Team Members
         </h2>
         <div className="divide-y divide-zinc-800">
-          {company.users.map((user) => (
+          {company.users.map((user: { id: string; name: string | null; email: string; role: string }) => (
             <div
               key={user.id}
               className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
