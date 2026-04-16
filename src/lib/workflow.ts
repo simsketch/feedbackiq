@@ -291,7 +291,7 @@ export async function triggerWorkflow(
       return;
     } catch (err: unknown) {
       const status = (err as { status?: number }).status;
-      if (status === 422 && attempt < maxAttempts) {
+      if ((status === 422 || status === 404) && attempt < maxAttempts) {
         continue;
       }
       throw err;
