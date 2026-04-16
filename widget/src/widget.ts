@@ -86,7 +86,7 @@ import { STYLES } from "./styles";
       submitBtn.textContent = "Submitting...";
 
       try {
-        await fetch("https://feedbackiq.app/api/v1/feedback", {
+        await fetch("https://app.feedbackiq.app/api/v1/feedback", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
