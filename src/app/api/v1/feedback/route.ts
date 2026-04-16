@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
 import { prisma } from "@/lib/prisma";
-import { runAgent } from "@/lib/agent";
-
-export const maxDuration = 300;
+import { getInstallationOctokit } from "@/lib/github";
+import {
+  ensureWorkflowInstalled,
+  ensureSecretSet,
+  triggerWorkflow,
+} from "@/lib/workflow";
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin") || "*";
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
 
   const project = await prisma.project.findUnique({
     where: { siteKey: site_key },
+    include: { company: true },
   });
 
   if (!project) {
@@ -51,16 +54,43 @@ export async function POST(request: Request) {
     },
   });
 
-  if (project.autoGeneratePrs) {
-    waitUntil(
-      runAgent(feedback.id).catch(async (err) => {
-        console.error("Agent error:", err);
+  if (project.autoGeneratePrs && project.company.githubInstallationId) {
+    const octokit = await getInstallationOctokit(
+      project.company.githubInstallationId
+    );
+    const [owner, repo] = project.githubRepo.split("/");
+
+    if (owner && repo) {
+      try {
+        await ensureWorkflowInstalled(
+          octokit,
+          owner,
+          repo,
+          project.defaultBranch
+        );
+        await ensureSecretSet(octokit, owner, repo);
+
+        const callbackUrl =
+          "https://app.feedbackiq.app/api/webhooks/agent-complete";
+
+        await triggerWorkflow(
+          octokit,
+          owner,
+          repo,
+          feedback.id,
+          content,
+          source_url || null,
+          project.defaultBranch,
+          callbackUrl
+        );
+      } catch (err) {
+        console.error("Failed to trigger workflow:", err);
         await prisma.feedback.update({
           where: { id: feedback.id },
           data: { status: "new" },
         });
-      })
-    );
+      }
+    }
   }
 
   return NextResponse.json(

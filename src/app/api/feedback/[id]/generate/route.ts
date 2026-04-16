@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { runAgent } from "@/lib/agent";
-
-export const maxDuration = 300;
+import { getInstallationOctokit } from "@/lib/github";
+import {
+  ensureWorkflowInstalled,
+  ensureSecretSet,
+  triggerWorkflow,
+} from "@/lib/workflow";
 
 export async function POST(
   _request: Request,
@@ -21,6 +24,11 @@ export async function POST(
       id,
       project: { companyId: user.companyId },
     },
+    include: {
+      project: {
+        include: { company: true },
+      },
+    },
   });
 
   if (!feedback) {
@@ -34,23 +42,57 @@ export async function POST(
     );
   }
 
-  await prisma.feedback.update({
-    where: { id },
-    data: { status: "generating" },
-  });
+  const { project } = feedback;
+  const { company } = project;
+
+  if (!company.githubInstallationId) {
+    return NextResponse.json(
+      { error: "GitHub is not connected for this company" },
+      { status: 400 }
+    );
+  }
+
+  const octokit = await getInstallationOctokit(company.githubInstallationId);
+  const [owner, repo] = project.githubRepo.split("/");
+  if (!owner || !repo) {
+    return NextResponse.json(
+      { error: `Invalid githubRepo format: ${project.githubRepo}` },
+      { status: 400 }
+    );
+  }
 
   try {
-    await runAgent(id);
-    return NextResponse.json({ status: "pr_created" });
+    await ensureWorkflowInstalled(octokit, owner, repo, project.defaultBranch);
+    await ensureSecretSet(octokit, owner, repo);
+
+    await prisma.feedback.update({
+      where: { id },
+      data: { status: "generating" },
+    });
+
+    const callbackUrl = "https://app.feedbackiq.app/api/webhooks/agent-complete";
+
+    await triggerWorkflow(
+      octokit,
+      owner,
+      repo,
+      id,
+      feedback.content,
+      feedback.sourceUrl,
+      project.defaultBranch,
+      callbackUrl
+    );
   } catch (err) {
-    console.error("Agent error:", err);
+    console.error("Failed to trigger workflow:", err);
     await prisma.feedback.update({
       where: { id },
       data: { status: "new" },
     });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Agent failed" },
+      { error: "Failed to trigger PR generation workflow" },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({ status: "generating" });
 }
