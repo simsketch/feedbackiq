@@ -57,10 +57,12 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-up">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-100">Overview</h1>
-        <p className="mt-1 text-sm text-zinc-400">
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="gradient-text">Overview</span>
+        </h1>
+        <p className="mt-2 text-sm text-zinc-400">
           A summary of your FeedbackIQ activity.
         </p>
       </div>

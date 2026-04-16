@@ -2,17 +2,19 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +39,7 @@ export default function RootLayout({
         `}</Script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased noise-bg`}
+        className={`${dmSans.variable} ${plexMono.variable} antialiased noise-bg`}
       >
         <ClerkProvider appearance={{ baseTheme: dark }}>{children}</ClerkProvider>
       </body>

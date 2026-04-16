@@ -40,9 +40,13 @@ export default async function ProjectDetailPage({
         </Link>
       </div>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">{project.name}</h1>
-        <p className="mt-1 text-sm text-zinc-400">{project.githubRepo}</p>
+      <div className="mb-8 animate-fade-up">
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="gradient-text">{project.name}</span>
+        </h1>
+        <p className="mt-2 text-sm font-mono text-zinc-500">
+          {project.githubRepo}
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 mb-8">

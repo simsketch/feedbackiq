@@ -234,6 +234,12 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export interface WorkflowDispatchResult {
+  dispatchedAt: Date;
+  runId: number | null;
+  runUrl: string | null;
+}
+
 export async function triggerWorkflow(
   octokit: Octokit,
   owner: string,
@@ -244,13 +250,14 @@ export async function triggerWorkflow(
   defaultBranch: string,
   callbackUrl: string,
   justCreated: boolean = false
-): Promise<void> {
+): Promise<WorkflowDispatchResult> {
   const callbackSecret = process.env.GITHUB_APP_WEBHOOK_SECRET;
   if (!callbackSecret) {
     throw new Error("GITHUB_APP_WEBHOOK_SECRET is not set");
   }
 
   const maxAttempts = justCreated ? 6 : 1;
+  const dispatchedAt = new Date();
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     if (justCreated && attempt > 1) {
@@ -275,7 +282,18 @@ export async function triggerWorkflow(
           },
         }
       );
-      return;
+
+      const run = await findRunAfterDispatch(
+        octokit,
+        owner,
+        repo,
+        dispatchedAt
+      );
+      return {
+        dispatchedAt,
+        runId: run?.id ?? null,
+        runUrl: run?.html_url ?? null,
+      };
     } catch (err: unknown) {
       const status = (err as { status?: number }).status;
       if ((status === 422 || status === 404) && attempt < maxAttempts) {
@@ -283,5 +301,69 @@ export async function triggerWorkflow(
       }
       throw err;
     }
+  }
+
+  return { dispatchedAt, runId: null, runUrl: null };
+}
+
+async function findRunAfterDispatch(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  dispatchedAt: Date
+): Promise<{ id: number; html_url: string } | null> {
+  const cutoff = new Date(dispatchedAt.getTime() - 10_000).toISOString();
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await sleep(attempt === 0 ? 2500 : 3000);
+
+    try {
+      const { data } = await octokit.request(
+        "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
+        {
+          owner,
+          repo,
+          workflow_id: "feedbackiq.yml",
+          event: "workflow_dispatch",
+          per_page: 5,
+          created: `>=${cutoff}`,
+        }
+      );
+
+      const run = data.workflow_runs?.[0];
+      if (run?.id) {
+        return { id: run.id, html_url: run.html_url };
+      }
+    } catch {
+      // retry
+    }
+  }
+  return null;
+}
+
+export async function getWorkflowRunStatus(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  runId: number
+): Promise<{
+  status: string | null;
+  conclusion: string | null;
+  htmlUrl: string;
+} | null> {
+  try {
+    const { data } = await octokit.request(
+      "GET /repos/{owner}/{repo}/actions/runs/{run_id}",
+      { owner, repo, run_id: runId }
+    );
+    return {
+      status: data.status,
+      conclusion: data.conclusion,
+      htmlUrl: data.html_url,
+    };
+  } catch (err: unknown) {
+    const status = (err as { status?: number }).status;
+    if (status === 404) return null;
+    throw err;
   }
 }

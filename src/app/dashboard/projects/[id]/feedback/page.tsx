@@ -44,7 +44,9 @@ export default async function FeedbackListPage({
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-zinc-100 mb-6">Feedback</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-6 animate-fade-up">
+        <span className="gradient-text">Feedback</span>
+      </h1>
 
       {feedback.length === 0 ? (
         <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-12 text-center">

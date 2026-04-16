@@ -46,7 +46,9 @@ export default async function PullRequestsPage({
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-zinc-100 mb-6">Pull Requests</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-6 animate-fade-up">
+        <span className="gradient-text">Pull Requests</span>
+      </h1>
 
       {pullRequests.length === 0 ? (
         <div className="glow-card rounded-xl bg-[#18181b] p-12 text-center">

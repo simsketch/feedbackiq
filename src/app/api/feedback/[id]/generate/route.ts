@@ -72,7 +72,7 @@ export async function POST(
 
     const callbackUrl = "https://app.feedbackiq.app/api/webhooks/agent-complete";
 
-    await triggerWorkflow(
+    const dispatch = await triggerWorkflow(
       octokit,
       owner,
       repo,
@@ -83,6 +83,16 @@ export async function POST(
       callbackUrl,
       justCreated
     );
+
+    await prisma.pullRequest.create({
+      data: {
+        feedbackId: id,
+        branchName: `feedbackiq/feedback-${id.slice(0, 8)}`,
+        status: "pending",
+        workflowRunId: dispatch.runId ? BigInt(dispatch.runId) : null,
+        workflowRunUrl: dispatch.runUrl,
+      },
+    });
   } catch (err) {
     console.error("Failed to trigger workflow:", err);
     await prisma.feedback.update({

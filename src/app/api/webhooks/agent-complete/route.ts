@@ -51,34 +51,64 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const pendingPr = await prisma.pullRequest.findFirst({
+    where: { feedbackId: feedback_id, status: "pending" },
+    orderBy: { createdAt: "desc" },
+  });
+
   if (status === "pr_created" && pr_url) {
-    await prisma.pullRequest.create({
-      data: {
-        feedbackId: feedback_id,
-        githubPrUrl: pr_url,
-        githubPrNumber: pr_number || null,
-        branchName: branch_name || "",
-        status: "open",
-        agentLog: agent_log || null,
-      },
-    });
+    if (pendingPr) {
+      await prisma.pullRequest.update({
+        where: { id: pendingPr.id },
+        data: {
+          githubPrUrl: pr_url,
+          githubPrNumber: pr_number || null,
+          branchName: branch_name || pendingPr.branchName,
+          status: "open",
+          agentLog: agent_log || null,
+        },
+      });
+    } else {
+      await prisma.pullRequest.create({
+        data: {
+          feedbackId: feedback_id,
+          githubPrUrl: pr_url,
+          githubPrNumber: pr_number || null,
+          branchName: branch_name || "",
+          status: "open",
+          agentLog: agent_log || null,
+        },
+      });
+    }
 
     await prisma.feedback.update({
       where: { id: feedback_id },
       data: { status: "pr_created" },
     });
   } else {
-    // closed or error
-    await prisma.pullRequest.create({
-      data: {
-        feedbackId: feedback_id,
-        branchName: branch_name || "",
-        status: "closed",
-        agentLog: agent_log
-          ? agent_log + (error ? "\nError: " + error : "")
-          : error || null,
-      },
-    });
+    const combinedLog = agent_log
+      ? agent_log + (error ? "\nError: " + error : "")
+      : error || null;
+
+    if (pendingPr) {
+      await prisma.pullRequest.update({
+        where: { id: pendingPr.id },
+        data: {
+          branchName: branch_name || pendingPr.branchName,
+          status: "closed",
+          agentLog: combinedLog,
+        },
+      });
+    } else {
+      await prisma.pullRequest.create({
+        data: {
+          feedbackId: feedback_id,
+          branchName: branch_name || "",
+          status: "closed",
+          agentLog: combinedLog,
+        },
+      });
+    }
 
     await prisma.feedback.update({
       where: { id: feedback_id },

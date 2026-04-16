@@ -103,6 +103,8 @@ model PullRequest {
   branchName      String
   status          PullRequestStatus @default(pending)
   agentLog        String?
+  workflowRunId   BigInt?
+  workflowRunUrl  String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
