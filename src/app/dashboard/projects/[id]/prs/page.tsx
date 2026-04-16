@@ -10,6 +10,7 @@ const statusBadge: Record<string, string> = {
   pending: "bg-amber-500/10 text-amber-400",
   closed: "bg-zinc-500/10 text-zinc-400",
   failed: "bg-red-500/10 text-red-400",
+  canceled: "bg-orange-500/10 text-orange-400",
 };
 
 export default async function PullRequestsPage({

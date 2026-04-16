@@ -31,6 +31,7 @@ enum PullRequestStatus {
   merged
   closed
   failed
+  canceled
 
   @@schema("feedbackiq")
 }

@@ -86,10 +86,12 @@ export async function GET(
             run.conclusion &&
             run.conclusion !== "success"
           ) {
+            const newStatus =
+              run.conclusion === "cancelled" ? "canceled" : "failed";
             await prisma.pullRequest.update({
               where: { id: pr.id },
               data: {
-                status: "failed",
+                status: newStatus,
                 agentLog:
                   (pr.agentLog || "") +
                   "\n[auto] Workflow run " +
