@@ -151,7 +151,7 @@ ${repoTree || "(failed to load - use read_file with paths you can infer)"}
 USER FEEDBACK:
 ${feedback.content}${feedback.sourceUrl ? `\n\nSubmitted from: ${feedback.sourceUrl}` : ""}${feedback.submitterEmail ? `\nSubmitter: ${feedback.submitterEmail}` : ""}`;
 
-  const anthropic = new Anthropic();
+  const anthropic = new Anthropic({ timeout: 10 * 60 * 1000 });
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
