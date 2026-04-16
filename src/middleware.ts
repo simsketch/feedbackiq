@@ -5,7 +5,8 @@ const isProtectedRoute = createRouteMatcher([
   "/api/projects(.*)",
   "/api/feedback(.*)",
   "/api/pull-requests(.*)",
-  "/api/github(.*)",
+  "/api/github/install",
+  "/api/github/repos(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

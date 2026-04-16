@@ -16,10 +16,16 @@ export default async function ProjectDetailPage({
 
   const { id } = await params;
 
-  const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId },
-    include: { _count: { select: { feedback: true } } },
-  });
+  const [project, company] = await Promise.all([
+    prisma.project.findFirst({
+      where: { id, companyId: user.companyId },
+      include: { _count: { select: { feedback: true } } },
+    }),
+    prisma.company.findUnique({
+      where: { id: user.companyId },
+      select: { githubInstallationId: true },
+    }),
+  ]);
 
   if (!project) notFound();
 
@@ -52,7 +58,7 @@ export default async function ProjectDetailPage({
         </Link>
 
         <Link
-          href={`/dashboard/projects/${project.id}/pull-requests`}
+          href={`/dashboard/projects/${project.id}/prs`}
           className="glow-card block rounded-xl border border-zinc-800 bg-[#18181b] p-6 hover:border-zinc-700 transition-colors"
         >
           <h3 className="text-lg font-semibold text-zinc-100">
@@ -65,7 +71,7 @@ export default async function ProjectDetailPage({
       </div>
 
       <div className="space-y-8">
-        <WidgetSnippet siteKey={project.siteKey} />
+        <WidgetSnippet siteKey={project.siteKey} isGithubConnected={!!company?.githubInstallationId} />
         <ProjectSettings
           projectId={project.id}
           autoGeneratePrs={project.autoGeneratePrs}
