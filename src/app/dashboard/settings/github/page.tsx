@@ -18,30 +18,30 @@ export default async function GitHubSettingsPage() {
       <div>
         <Link
           href="/dashboard/settings"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-zinc-400 hover:text-zinc-300"
         >
           &larr; Back to Settings
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900">
+        <h1 className="mt-2 text-2xl font-bold text-zinc-100">
           GitHub Integration
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-zinc-400">
           Manage your GitHub App connection for automated PR generation.
         </p>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-6">
         {isConnected ? (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <span className="inline-block h-3 w-3 rounded-full bg-green-500" />
-              <h2 className="text-lg font-semibold text-gray-900">
+              <span className="inline-block h-3 w-3 rounded-full bg-green-400" />
+              <h2 className="text-lg font-semibold text-zinc-100">
                 Connected
               </h2>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-zinc-400">
               GitHub App is installed with installation ID{" "}
-              <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">
+              <code className="rounded bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 text-xs font-mono text-cyan-400">
                 {company!.githubInstallationId}
               </code>
               .
@@ -51,7 +51,7 @@ export default async function GitHubSettingsPage() {
                 href={`https://github.com/settings/installations/${company!.githubInstallationId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                className="inline-flex items-center rounded-md bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-700"
               >
                 Manage on GitHub
               </a>
@@ -60,18 +60,18 @@ export default async function GitHubSettingsPage() {
         ) : (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <span className="inline-block h-3 w-3 rounded-full bg-gray-300" />
-              <h2 className="text-lg font-semibold text-gray-900">
+              <span className="inline-block h-3 w-3 rounded-full bg-zinc-600" />
+              <h2 className="text-lg font-semibold text-zinc-100">
                 Not Connected
               </h2>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-zinc-400">
               Install the FeedbackIQ GitHub App to enable automatic pull request
               generation from user feedback.
             </p>
             <a
               href="/api/github/install"
-              className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-zinc-200"
             >
               Connect GitHub
             </a>

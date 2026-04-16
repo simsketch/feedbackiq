@@ -6,11 +6,11 @@ import { notFound } from "next/navigation";
 import GeneratePrButton from "@/components/generate-pr-button";
 
 const statusBadge: Record<string, string> = {
-  new: "bg-blue-100 text-blue-700",
-  reviewing: "bg-blue-100 text-blue-700",
-  generating: "bg-yellow-100 text-yellow-700",
-  pr_created: "bg-green-100 text-green-700",
-  closed: "bg-gray-100 text-gray-700",
+  new: "bg-cyan-500/10 text-cyan-400",
+  reviewing: "bg-cyan-500/10 text-cyan-400",
+  generating: "bg-amber-500/10 text-amber-400",
+  pr_created: "bg-green-500/10 text-green-400",
+  closed: "bg-zinc-500/10 text-zinc-400",
 };
 
 export default async function FeedbackDetailPage({
@@ -42,33 +42,33 @@ export default async function FeedbackDetailPage({
   return (
     <div>
       <div className="mb-8">
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
+        <nav className="flex items-center gap-2 text-sm text-zinc-500">
           <Link
             href={`/dashboard/projects/${project.id}`}
-            className="text-indigo-600 hover:text-indigo-500"
+            className="text-cyan-400 hover:text-cyan-300"
           >
             {project.name}
           </Link>
-          <span>/</span>
+          <span className="text-zinc-600">/</span>
           <Link
             href={`/dashboard/projects/${project.id}/feedback`}
-            className="text-indigo-600 hover:text-indigo-500"
+            className="text-cyan-400 hover:text-cyan-300"
           >
             Feedback
           </Link>
-          <span>/</span>
-          <span className="text-gray-700">Detail</span>
+          <span className="text-zinc-600">/</span>
+          <span className="text-zinc-300">Detail</span>
         </nav>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-6">
         <div className="flex items-start justify-between gap-4 mb-6">
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-zinc-100">
             Feedback Detail
           </h1>
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              statusBadge[feedback.status] || "bg-gray-100 text-gray-700"
+              statusBadge[feedback.status] || "bg-zinc-500/10 text-zinc-400"
             }`}
           >
             {feedback.status.replace("_", " ")}
@@ -76,12 +76,12 @@ export default async function FeedbackDetailPage({
         </div>
 
         <div className="prose max-w-none mb-6">
-          <p className="whitespace-pre-wrap text-gray-800">
+          <p className="whitespace-pre-wrap text-zinc-400">
             {feedback.content}
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 mb-6">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500 mb-6">
           <span>
             Submitted: {new Date(feedback.createdAt).toLocaleString()}
           </span>
@@ -95,7 +95,7 @@ export default async function FeedbackDetailPage({
                 href={feedback.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-600 hover:text-indigo-500"
+                className="text-cyan-400 hover:text-cyan-300"
               >
                 {feedback.sourceUrl}
               </a>
@@ -111,18 +111,18 @@ export default async function FeedbackDetailPage({
 
         {feedback.pullRequests.length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <h2 className="text-lg font-semibold text-zinc-100 mb-3">
               Pull Requests
             </h2>
             <div className="space-y-3">
               {feedback.pullRequests.map((pr) => (
                 <div
                   key={pr.id}
-                  className="rounded-lg border border-gray-200 p-4"
+                  className="rounded-xl border border-zinc-800 p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-zinc-100">
                         {pr.branchName}
                       </p>
                       {pr.githubPrUrl && (
@@ -130,13 +130,13 @@ export default async function FeedbackDetailPage({
                           href={pr.githubPrUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-indigo-600 hover:text-indigo-500"
+                          className="text-sm text-cyan-400 hover:text-cyan-300"
                         >
                           PR #{pr.githubPrNumber} &rarr;
                         </a>
                       )}
                     </div>
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                    <span className="inline-flex items-center rounded-full bg-zinc-500/10 px-2.5 py-0.5 text-xs font-medium text-zinc-400">
                       {pr.status}
                     </span>
                   </div>

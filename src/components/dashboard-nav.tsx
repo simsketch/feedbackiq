@@ -15,14 +15,17 @@ export default function DashboardNav() {
   const { signOut } = useClerk();
 
   return (
-    <nav className="border-b bg-white">
+    <nav className="bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
         <div className="flex items-center gap-8">
           <Link
             href="/dashboard"
-            className="text-lg font-bold text-gray-900 tracking-tight"
+            className="flex items-center gap-2 text-lg font-bold tracking-tight"
           >
-            FeedbackIQ
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-xs font-bold">
+              F
+            </span>
+            <span className="text-white">FeedbackIQ</span>
           </Link>
           <ul className="flex items-center gap-1">
             {navItems.map((item) => {
@@ -37,8 +40,8 @@ export default function DashboardNav() {
                     href={item.href}
                     className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                        ? "text-cyan-400"
+                        : "text-zinc-400 hover:text-white"
                     }`}
                   >
                     {item.label}
@@ -50,7 +53,7 @@ export default function DashboardNav() {
         </div>
         <button
           onClick={() => signOut({ redirectUrl: "/" })}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
+          className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
         >
           Logout
         </button>

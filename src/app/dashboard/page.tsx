@@ -3,14 +3,19 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const statusBadgeClasses: Record<string, string> = {
-  new: "bg-blue-100 text-blue-700",
-  pr_created: "bg-green-100 text-green-700",
-  generating: "bg-yellow-100 text-yellow-700",
+  new: "bg-cyan-500/10 text-cyan-400",
+  reviewing: "bg-cyan-500/10 text-cyan-400",
+  generating: "bg-amber-500/10 text-amber-400",
+  pr_created: "bg-green-500/10 text-green-400",
+  closed: "bg-zinc-500/10 text-zinc-400",
+  open: "bg-green-500/10 text-green-400",
+  merged: "bg-purple-500/10 text-purple-400",
+  pending: "bg-amber-500/10 text-amber-400",
 };
 
 function StatusBadge({ status }: { status: string }) {
   const classes =
-    statusBadgeClasses[status] ?? "bg-gray-100 text-gray-600";
+    statusBadgeClasses[status] ?? "bg-zinc-500/10 text-zinc-400";
   const label = status.replace("_", " ");
 
   return (
@@ -54,8 +59,8 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Overview</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-zinc-100">Overview</h1>
+        <p className="mt-1 text-sm text-zinc-400">
           A summary of your FeedbackIQ activity.
         </p>
       </div>
@@ -65,10 +70,10 @@ export default async function DashboardPage() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white rounded-lg border border-gray-200 p-6"
+            className="glow-card rounded-xl bg-[#18181b] p-6"
           >
-            <p className="text-sm font-medium text-gray-500">{stat.label}</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">
+            <p className="text-sm font-medium text-zinc-400">{stat.label}</p>
+            <p className="mt-2 text-3xl font-bold text-white">
               {stat.value}
             </p>
           </div>
@@ -77,13 +82,13 @@ export default async function DashboardPage() {
 
       {/* No projects state */}
       {projectCount === 0 && (
-        <div className="bg-white rounded-lg border border-dashed border-gray-300 p-10 text-center">
-          <p className="text-sm text-gray-500 mb-3">
+        <div className="rounded-xl border border-dashed border-zinc-700 p-10 text-center">
+          <p className="text-sm text-zinc-400 mb-3">
             You have not created any projects yet.
           </p>
           <Link
             href="/dashboard/projects/new"
-            className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500"
+            className="inline-flex items-center text-sm font-medium text-cyan-400 hover:text-cyan-300"
           >
             Create your first project &rarr;
           </Link>
@@ -93,12 +98,12 @@ export default async function DashboardPage() {
       {/* Recent feedback */}
       {projectCount > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          <h2 className="text-lg font-semibold text-zinc-100 mb-3">
             Recent Feedback
           </h2>
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+          <div className="glow-card rounded-xl bg-[#18181b] divide-y divide-zinc-800">
             {recentFeedback.length === 0 ? (
-              <p className="px-6 py-8 text-sm text-center text-gray-500">
+              <p className="px-6 py-8 text-sm text-center text-zinc-500">
                 No feedback received yet.
               </p>
             ) : (
@@ -108,10 +113,10 @@ export default async function DashboardPage() {
                   className="flex items-start justify-between px-6 py-4 gap-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-gray-900 truncate">
+                    <p className="text-sm text-zinc-100 truncate">
                       {item.content}
                     </p>
-                    <p className="mt-0.5 text-xs text-gray-400">
+                    <p className="mt-0.5 text-xs text-zinc-500">
                       {item.project.name} &middot;{" "}
                       {new Date(item.createdAt).toLocaleDateString("en-US", {
                         month: "short",

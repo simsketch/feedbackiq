@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   });
 
   if (!company) {
-    return <p className="text-sm text-red-500">Company not found.</p>;
+    return <p className="text-sm text-red-400">Company not found.</p>;
   }
 
   const isGithubConnected = !!company.githubInstallationId;
@@ -25,31 +25,31 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-zinc-100">Settings</h1>
+        <p className="mt-1 text-sm text-zinc-400">
           Manage your company settings and integrations.
         </p>
       </div>
 
       {/* Company info */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Company</h2>
+      <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-6">
+        <h2 className="text-lg font-semibold text-zinc-100 mb-4">Company</h2>
         <dl className="space-y-3">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Name</dt>
-            <dd className="mt-1 text-sm text-gray-900">{company.name}</dd>
+            <dt className="text-sm font-medium text-zinc-500">Name</dt>
+            <dd className="mt-1 text-sm text-zinc-100">{company.name}</dd>
           </div>
         </dl>
       </div>
 
       {/* GitHub connection */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-zinc-100">
               GitHub Integration
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-zinc-400">
               {isGithubConnected
                 ? "GitHub App is connected."
                 : "Connect the GitHub App to enable PR generation."}
@@ -58,10 +58,10 @@ export default async function SettingsPage() {
           <div className="flex items-center gap-2">
             <span
               className={`inline-block h-2.5 w-2.5 rounded-full ${
-                isGithubConnected ? "bg-green-500" : "bg-gray-300"
+                isGithubConnected ? "bg-green-400" : "bg-zinc-600"
               }`}
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-zinc-400">
               {isGithubConnected ? "Connected" : "Not connected"}
             </span>
           </div>
@@ -69,7 +69,7 @@ export default async function SettingsPage() {
         <div className="mt-4">
           <Link
             href="/dashboard/settings/github"
-            className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            className="text-sm font-medium text-cyan-400 hover:text-cyan-300"
           >
             Manage GitHub settings &rarr;
           </Link>
@@ -77,23 +77,23 @@ export default async function SettingsPage() {
       </div>
 
       {/* Team members */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-6">
+        <h2 className="text-lg font-semibold text-zinc-100 mb-4">
           Team Members
         </h2>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-zinc-800">
           {company.users.map((user) => (
             <div
               key={user.id}
               className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
             >
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-zinc-100">
                   {user.name || user.email}
                 </p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <p className="text-xs text-zinc-500">{user.email}</p>
               </div>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-500/10 text-zinc-400 capitalize">
                 {user.role}
               </span>
             </div>

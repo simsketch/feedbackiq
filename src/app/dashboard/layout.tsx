@@ -15,9 +15,9 @@ export default async function DashboardLayout({
   if (!user) redirect("/onboarding");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#09090b]">
       <DashboardNav />
-      <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
+      <main className="grid-bg max-w-6xl mx-auto px-4 py-8">{children}</main>
     </div>
   );
 }

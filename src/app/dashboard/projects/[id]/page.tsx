@@ -28,24 +28,24 @@ export default async function ProjectDetailPage({
       <div className="mb-8">
         <Link
           href="/dashboard/projects"
-          className="text-sm text-indigo-600 hover:text-indigo-500"
+          className="text-sm text-cyan-400 hover:text-cyan-300"
         >
           &larr; All Projects
         </Link>
       </div>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-        <p className="mt-1 text-sm text-gray-500">{project.githubRepo}</p>
+        <h1 className="text-2xl font-bold text-white">{project.name}</h1>
+        <p className="mt-1 text-sm text-zinc-400">{project.githubRepo}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 mb-8">
         <Link
           href={`/dashboard/projects/${project.id}/feedback`}
-          className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+          className="glow-card block rounded-xl border border-zinc-800 bg-[#18181b] p-6 hover:border-zinc-700 transition-colors"
         >
-          <h3 className="text-lg font-semibold text-gray-900">Feedback</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <h3 className="text-lg font-semibold text-zinc-100">Feedback</h3>
+          <p className="mt-1 text-sm text-zinc-400">
             {project._count.feedback} item
             {project._count.feedback !== 1 ? "s" : ""}
           </p>
@@ -53,12 +53,12 @@ export default async function ProjectDetailPage({
 
         <Link
           href={`/dashboard/projects/${project.id}/pull-requests`}
-          className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+          className="glow-card block rounded-xl border border-zinc-800 bg-[#18181b] p-6 hover:border-zinc-700 transition-colors"
         >
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-zinc-100">
             Pull Requests
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-zinc-400">
             View generated pull requests
           </p>
         </Link>

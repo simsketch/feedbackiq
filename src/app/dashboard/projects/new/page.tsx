@@ -40,10 +40,10 @@ export default function NewProjectPage() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">New Project</h1>
+      <h1 className="text-2xl font-bold text-white mb-8">New Project</h1>
 
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-md bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400">
           {error}
         </div>
       )}
@@ -52,7 +52,7 @@ export default function NewProjectPage() {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-zinc-400"
           >
             Project name
           </label>
@@ -62,7 +62,7 @@ export default function NewProjectPage() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md bg-zinc-900 border border-zinc-700 px-3 py-2 text-white placeholder-zinc-500 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 sm:text-sm"
             placeholder="My Awesome App"
           />
         </div>
@@ -70,7 +70,7 @@ export default function NewProjectPage() {
         <div>
           <label
             htmlFor="githubRepo"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-zinc-400"
           >
             GitHub repository (owner/repo)
           </label>
@@ -80,7 +80,7 @@ export default function NewProjectPage() {
             required
             value={githubRepo}
             onChange={(e) => setGithubRepo(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md bg-zinc-900 border border-zinc-700 px-3 py-2 text-white placeholder-zinc-500 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 sm:text-sm"
             placeholder="owner/repo"
           />
         </div>
@@ -88,7 +88,7 @@ export default function NewProjectPage() {
         <div>
           <label
             htmlFor="defaultBranch"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-zinc-400"
           >
             Default branch
           </label>
@@ -97,14 +97,14 @@ export default function NewProjectPage() {
             type="text"
             value={defaultBranch}
             onChange={(e) => setDefaultBranch(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md bg-zinc-900 border border-zinc-700 px-3 py-2 text-white placeholder-zinc-500 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 sm:text-sm"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50"
+          className="w-full rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-200 disabled:opacity-50"
         >
           {loading ? "Creating..." : "Create Project"}
         </button>
