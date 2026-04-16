@@ -157,7 +157,7 @@ jobs:
           CALLBACK_URL: \${{ inputs.callback_url }}
           CALLBACK_SECRET: \${{ inputs.callback_secret }}
           GH_TOKEN: \${{ github.token }}
-        run: echo '${scriptBase64}' | base64 -d > /tmp/agent.mjs && node /tmp/agent.mjs
+        run: echo '${scriptBase64}' | base64 -d > /tmp/agent.mjs && NODE_PATH=$PWD/node_modules node /tmp/agent.mjs
 `;
 }
 
