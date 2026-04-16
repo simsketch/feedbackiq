@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { runAgent } from "@/lib/agent";
@@ -40,15 +39,18 @@ export async function POST(
     data: { status: "generating" },
   });
 
-  waitUntil(
-    runAgent(id).catch(async (err) => {
-      console.error("Agent error:", err);
-      await prisma.feedback.update({
-        where: { id },
-        data: { status: "new" },
-      });
-    })
-  );
-
-  return NextResponse.json({ status: "generating" });
+  try {
+    await runAgent(id);
+    return NextResponse.json({ status: "pr_created" });
+  } catch (err) {
+    console.error("Agent error:", err);
+    await prisma.feedback.update({
+      where: { id },
+      data: { status: "new" },
+    });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Agent failed" },
+      { status: 500 }
+    );
+  }
 }
