@@ -76,9 +76,19 @@ export async function POST(
     );
   }
 
+  let pendingPrId: string | null = null;
   try {
     const justCreated = await ensureWorkflowInstalled(octokit, owner, repo, project.defaultBranch);
     await ensureSecretSet(octokit, owner, repo);
+
+    const pendingPr = await prisma.pullRequest.create({
+      data: {
+        feedbackId: id,
+        branchName: `feedbackiq/feedback-${id.slice(0, 8)}`,
+        status: "pending",
+      },
+    });
+    pendingPrId = pendingPr.id;
 
     await prisma.feedback.update({
       where: { id },
@@ -99,17 +109,24 @@ export async function POST(
       justCreated
     );
 
-    await prisma.pullRequest.create({
+    await prisma.pullRequest.update({
+      where: { id: pendingPr.id },
       data: {
-        feedbackId: id,
-        branchName: `feedbackiq/feedback-${id.slice(0, 8)}`,
-        status: "pending",
         workflowRunId: dispatch.runId ? BigInt(dispatch.runId) : null,
         workflowRunUrl: dispatch.runUrl,
       },
     });
   } catch (err) {
     console.error("Failed to trigger workflow:", err);
+    if (pendingPrId) {
+      await prisma.pullRequest.update({
+        where: { id: pendingPrId },
+        data: {
+          status: "closed",
+          agentLog: `[auto] Dispatch failed: ${err instanceof Error ? err.message : String(err)}`,
+        },
+      });
+    }
     await prisma.feedback.update({
       where: { id },
       data: { status: "new" },

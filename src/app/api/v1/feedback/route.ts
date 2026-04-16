@@ -61,6 +61,7 @@ export async function POST(request: Request) {
     const [owner, repo] = project.githubRepo.split("/");
 
     if (owner && repo) {
+      let pendingPrId: string | null = null;
       try {
         await ensureWorkflowInstalled(
           octokit,
@@ -69,6 +70,15 @@ export async function POST(request: Request) {
           project.defaultBranch
         );
         await ensureSecretSet(octokit, owner, repo);
+
+        const pendingPr = await prisma.pullRequest.create({
+          data: {
+            feedbackId: feedback.id,
+            branchName: `feedbackiq/feedback-${feedback.id.slice(0, 8)}`,
+            status: "pending",
+          },
+        });
+        pendingPrId = pendingPr.id;
 
         const callbackUrl =
           "https://app.feedbackiq.app/api/webhooks/agent-complete";
@@ -84,17 +94,24 @@ export async function POST(request: Request) {
           callbackUrl
         );
 
-        await prisma.pullRequest.create({
+        await prisma.pullRequest.update({
+          where: { id: pendingPr.id },
           data: {
-            feedbackId: feedback.id,
-            branchName: `feedbackiq/feedback-${feedback.id.slice(0, 8)}`,
-            status: "pending",
             workflowRunId: dispatch.runId ? BigInt(dispatch.runId) : null,
             workflowRunUrl: dispatch.runUrl,
           },
         });
       } catch (err) {
         console.error("Failed to trigger workflow:", err);
+        if (pendingPrId) {
+          await prisma.pullRequest.update({
+            where: { id: pendingPrId },
+            data: {
+              status: "closed",
+              agentLog: `[auto] Dispatch failed: ${err instanceof Error ? err.message : String(err)}`,
+            },
+          });
+        }
         await prisma.feedback.update({
           where: { id: feedback.id },
           data: { status: "new" },

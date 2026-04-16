@@ -109,9 +109,13 @@ export async function GET(
     },
   });
 
+  const generatingAgeMs = Date.now() - feedback.updatedAt.getTime();
+  const isStaleGenerating = generatingAgeMs > STALE_MINUTES * 60 * 1000;
+
   if (
     feedback.status === "generating" &&
-    !openPrExists
+    !openPrExists &&
+    isStaleGenerating
   ) {
     await prisma.feedback.update({
       where: { id: feedback.id },
