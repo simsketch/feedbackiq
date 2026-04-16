@@ -35,9 +35,24 @@ export async function POST(
     return NextResponse.json({ error: "Feedback not found" }, { status: 404 });
   }
 
-  if (feedback.status !== "new" && feedback.status !== "reviewing") {
+  const STALE_MS = 20 * 60 * 1000;
+  const isStaleGenerating =
+    feedback.status === "generating" &&
+    Date.now() - feedback.updatedAt.getTime() > STALE_MS;
+
+  const canDispatch =
+    feedback.status === "new" ||
+    feedback.status === "reviewing" ||
+    feedback.status === "closed" ||
+    feedback.status === "pr_created" ||
+    isStaleGenerating;
+
+  if (!canDispatch) {
     return NextResponse.json(
-      { error: "Feedback is not in a valid state for PR generation" },
+      {
+        error:
+          "A generation is already in progress. Wait for it to finish before retrying.",
+      },
       { status: 400 }
     );
   }

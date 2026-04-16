@@ -76,7 +76,11 @@ export default function FeedbackRuns({
     };
   }, [feedbackId, shouldPoll]);
 
-  const canGenerate = status === "new" || status === "closed";
+  const canGenerate =
+    status === "new" ||
+    status === "reviewing" ||
+    status === "closed" ||
+    status === "pr_created";
 
   return (
     <div>
