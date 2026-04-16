@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import { prisma } from "@/lib/prisma";
 import { runAgent } from "@/lib/agent";
+
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin") || "*";
@@ -49,13 +52,15 @@ export async function POST(request: Request) {
   });
 
   if (project.autoGeneratePrs) {
-    runAgent(feedback.id).catch(async (err) => {
-      console.error("Agent error:", err);
-      await prisma.feedback.update({
-        where: { id: feedback.id },
-        data: { status: "new" },
-      });
-    });
+    waitUntil(
+      runAgent(feedback.id).catch(async (err) => {
+        console.error("Agent error:", err);
+        await prisma.feedback.update({
+          where: { id: feedback.id },
+          data: { status: "new" },
+        });
+      })
+    );
   }
 
   return NextResponse.json(
