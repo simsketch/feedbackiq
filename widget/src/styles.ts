@@ -1,9 +1,21 @@
 export const STYLES = `
+  :host {
+    --fiq-primary: #000000;
+    --fiq-primary-contrast: #ffffff;
+    --fiq-background: #ffffff;
+    --fiq-foreground: #111111;
+    --fiq-muted: #666666;
+    --fiq-border: #dddddd;
+    --fiq-radius: 12px;
+    --fiq-radius-sm: 8px;
+    --fiq-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--fiq-font);
   }
 
   .fiq-trigger {
@@ -13,8 +25,8 @@ export const STYLES = `
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #000;
-    color: #fff;
+    background: var(--fiq-primary);
+    color: var(--fiq-primary-contrast);
     border: none;
     cursor: pointer;
     display: flex;
@@ -33,7 +45,7 @@ export const STYLES = `
   .fiq-trigger svg {
     width: 22px;
     height: 22px;
-    fill: #fff;
+    fill: var(--fiq-primary-contrast);
   }
 
   .fiq-panel {
@@ -41,8 +53,9 @@ export const STYLES = `
     bottom: 80px;
     right: 20px;
     width: 360px;
-    background: #fff;
-    border-radius: 12px;
+    background: var(--fiq-background);
+    color: var(--fiq-foreground);
+    border-radius: var(--fiq-radius);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     z-index: 2147483647;
     overflow: hidden;
@@ -67,13 +80,13 @@ export const STYLES = `
   .fiq-header h3 {
     font-size: 16px;
     font-weight: 600;
-    color: #111;
+    color: var(--fiq-foreground);
     margin-bottom: 4px;
   }
 
   .fiq-header p {
     font-size: 13px;
-    color: #666;
+    color: var(--fiq-muted);
     margin-bottom: 0;
   }
 
@@ -84,64 +97,68 @@ export const STYLES = `
   .fiq-textarea {
     width: 100%;
     min-height: 120px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--fiq-border);
+    border-radius: var(--fiq-radius-sm);
     padding: 12px;
     font-size: 14px;
-    color: #333;
+    color: var(--fiq-foreground);
+    background: var(--fiq-background);
     resize: vertical;
     outline: none;
     transition: border-color 0.2s ease;
   }
 
   .fiq-textarea:focus {
-    border-color: #000;
+    border-color: var(--fiq-primary);
   }
 
   .fiq-textarea::placeholder {
-    color: #aaa;
+    color: var(--fiq-muted);
+    opacity: 0.7;
   }
 
   .fiq-email {
     width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--fiq-border);
+    border-radius: var(--fiq-radius-sm);
     padding: 10px 12px;
     font-size: 14px;
-    color: #333;
+    color: var(--fiq-foreground);
+    background: var(--fiq-background);
     margin-top: 10px;
     outline: none;
     transition: border-color 0.2s ease;
   }
 
   .fiq-email:focus {
-    border-color: #000;
+    border-color: var(--fiq-primary);
   }
 
   .fiq-email::placeholder {
-    color: #aaa;
+    color: var(--fiq-muted);
+    opacity: 0.7;
   }
 
   .fiq-submit {
     width: 100%;
-    background: #000;
-    color: #fff;
+    background: var(--fiq-primary);
+    color: var(--fiq-primary-contrast);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--fiq-radius-sm);
     padding: 12px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     margin-top: 12px;
-    transition: background 0.2s ease;
+    transition: filter 0.2s ease;
   }
 
   .fiq-submit:hover {
-    background: #222;
+    filter: brightness(0.9);
   }
 
   .fiq-submit:disabled {
-    background: #999;
+    opacity: 0.6;
     cursor: not-allowed;
   }
 
@@ -152,7 +169,7 @@ export const STYLES = `
 
   .fiq-success p {
     font-size: 15px;
-    color: #333;
+    color: var(--fiq-foreground);
     font-weight: 500;
   }
 

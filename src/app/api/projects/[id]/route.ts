@@ -50,6 +50,7 @@ export async function PATCH(
   if (body.name !== undefined) data.name = body.name;
   if (body.autoGeneratePrs !== undefined) data.autoGeneratePrs = body.autoGeneratePrs;
   if (body.defaultBranch !== undefined) data.defaultBranch = body.defaultBranch;
+  if (body.websiteUrl !== undefined) data.websiteUrl = body.websiteUrl || null;
 
   const project = await prisma.project.update({
     where: { id },

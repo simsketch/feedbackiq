@@ -8,6 +8,7 @@ export default function NewProjectPage() {
   const [name, setName] = useState("");
   const [githubRepo, setGithubRepo] = useState("");
   const [defaultBranch, setDefaultBranch] = useState("main");
+  const [websiteUrl, setWebsiteUrl] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ export default function NewProjectPage() {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, githubRepo, defaultBranch }),
+        body: JSON.stringify({ name, githubRepo, defaultBranch, websiteUrl: websiteUrl || undefined }),
       });
 
       if (!res.ok) {
@@ -99,6 +100,26 @@ export default function NewProjectPage() {
             onChange={(e) => setDefaultBranch(e.target.value)}
             className="mt-1 block w-full rounded-md bg-zinc-900 border border-zinc-700 px-3 py-2 text-white placeholder-zinc-500 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 sm:text-sm"
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="websiteUrl"
+            className="block text-sm font-medium text-zinc-400"
+          >
+            Website URL (optional)
+          </label>
+          <input
+            id="websiteUrl"
+            type="url"
+            value={websiteUrl}
+            onChange={(e) => setWebsiteUrl(e.target.value)}
+            className="mt-1 block w-full rounded-md bg-zinc-900 border border-zinc-700 px-3 py-2 text-white placeholder-zinc-500 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 sm:text-sm"
+            placeholder="https://example.com"
+          />
+          <p className="mt-1 text-xs text-zinc-500">
+            We&apos;ll auto-detect your site&apos;s colors and fonts so the widget matches.
+          </p>
         </div>
 
         <button

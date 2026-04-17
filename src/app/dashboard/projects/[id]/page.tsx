@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import WidgetSnippet from "@/components/widget-snippet";
 import ProjectSettings from "@/components/project-settings";
+import ThemeSettings from "@/components/theme-settings";
 
 export default async function ProjectDetailPage({
   params,
@@ -76,6 +77,18 @@ export default async function ProjectDetailPage({
 
       <div className="space-y-8">
         <WidgetSnippet siteKey={project.siteKey} isGithubConnected={!!company?.githubInstallationId} />
+        <ThemeSettings
+          projectId={project.id}
+          initialWebsiteUrl={project.websiteUrl}
+          initialTheme={{
+            primary: project.themePrimary,
+            background: project.themeBackground,
+            foreground: project.themeForeground,
+            fontFamily: project.themeFontFamily,
+            borderRadius: project.themeBorderRadius,
+          }}
+          initialUpdatedAt={project.themeUpdatedAt}
+        />
         <ProjectSettings
           projectId={project.id}
           autoGeneratePrs={project.autoGeneratePrs}
