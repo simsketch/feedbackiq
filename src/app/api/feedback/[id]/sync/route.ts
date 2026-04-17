@@ -81,11 +81,7 @@ export async function GET(
             run.conclusion === "cancelled" ||
             run.conclusion === "timed_out";
 
-          if (
-            isTerminal &&
-            run.conclusion &&
-            run.conclusion !== "success"
-          ) {
+          if (isTerminal && run.conclusion && run.conclusion !== "success") {
             const newStatus =
               run.conclusion === "cancelled" ? "canceled" : "failed";
             await prisma.pullRequest.update({
@@ -100,6 +96,48 @@ export async function GET(
               },
             });
             flippedToTerminal = true;
+          } else if (isTerminal && run.conclusion === "success") {
+            const { data: prs } = await octokit.request(
+              "GET /repos/{owner}/{repo}/pulls",
+              {
+                owner,
+                repo,
+                head: `${owner}:${pr.branchName}`,
+                state: "all",
+                per_page: 1,
+              }
+            );
+            const foundPr = prs?.[0];
+            if (foundPr) {
+              await prisma.pullRequest.update({
+                where: { id: pr.id },
+                data: {
+                  status:
+                    foundPr.state === "closed"
+                      ? foundPr.merged_at
+                        ? "merged"
+                        : "closed"
+                      : "open",
+                  githubPrUrl: foundPr.html_url,
+                  githubPrNumber: foundPr.number,
+                },
+              });
+              await prisma.feedback.update({
+                where: { id: feedback.id },
+                data: { status: "pr_created" },
+              });
+            } else {
+              await prisma.pullRequest.update({
+                where: { id: pr.id },
+                data: {
+                  status: "closed",
+                  agentLog:
+                    (pr.agentLog || "") +
+                    "\n[auto] Workflow succeeded but no PR was created (agent made no changes).",
+                },
+              });
+              flippedToTerminal = true;
+            }
           }
         }
       } catch (err) {

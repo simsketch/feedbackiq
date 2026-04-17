@@ -3,22 +3,16 @@ import { prisma } from "@/lib/prisma";
 import { timingSafeEqual } from "crypto";
 
 export async function POST(request: NextRequest) {
-  const secret = request.headers.get("X-FeedbackIQ-Secret");
-  const expectedSecret = process.env.GITHUB_APP_WEBHOOK_SECRET;
+  const secret = request.headers.get("X-FeedbackIQ-Secret")?.trim();
+  const expectedSecret = process.env.GITHUB_APP_WEBHOOK_SECRET?.trim();
 
   if (!secret || !expectedSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const valid = timingSafeEqual(
-      Buffer.from(secret),
-      Buffer.from(expectedSecret)
-    );
-    if (!valid) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  } catch {
+  const a = Buffer.from(secret);
+  const b = Buffer.from(expectedSecret);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
