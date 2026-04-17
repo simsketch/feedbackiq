@@ -19,7 +19,7 @@ export default async function ProjectsPage() {
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="gradient-text">Projects</span>
         </h1>
-        <Link href="/dashboard/projects/new" className="btn-primary group">
+        <Link href="/dashboard/projects/new" className="btn-snake group">
           New Project
           <svg
             className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
@@ -44,7 +44,7 @@ export default async function ProjectsPage() {
             Get started by creating a new project.
           </p>
           <div className="mt-6">
-            <Link href="/dashboard/projects/new" className="btn-primary">
+            <Link href="/dashboard/projects/new" className="btn-snake">
               New Project
             </Link>
           </div>

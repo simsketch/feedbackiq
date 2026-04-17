@@ -51,7 +51,7 @@ export default async function GitHubSettingsPage() {
                 href={`https://github.com/settings/installations/${company!.githubInstallationId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-md bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-700"
+                className="btn-ghost"
               >
                 Manage on GitHub
               </a>
@@ -71,7 +71,7 @@ export default async function GitHubSettingsPage() {
             </p>
             <a
               href="/api/github/install"
-              className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-zinc-200"
+              className="btn-snake"
             >
               Connect GitHub
             </a>

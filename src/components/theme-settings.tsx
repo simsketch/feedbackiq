@@ -115,7 +115,7 @@ export default function ThemeSettings({
               type="button"
               onClick={saveWebsiteUrl}
               disabled={busy}
-              className="rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 hover:bg-zinc-700 disabled:opacity-50"
+              className="btn-ghost"
             >
               Save
             </button>
@@ -151,7 +151,7 @@ export default function ThemeSettings({
               type="button"
               onClick={detectTheme}
               disabled={busy || (!websiteUrl && !overrideUrl)}
-              className="rounded-md bg-cyan-500 px-3 py-2 text-sm font-semibold text-black hover:bg-cyan-400 disabled:opacity-50"
+              className="btn-snake"
             >
               {busy ? "Detecting..." : "Re-detect"}
             </button>

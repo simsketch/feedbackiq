@@ -39,7 +39,7 @@ export default function GeneratePrButton({
       <button
         onClick={handleGenerate}
         disabled={loading}
-        className="btn-primary group"
+        className="btn-snake group"
       >
         {loading ? "Dispatching..." : "Generate PR"}
         {!loading && (

@@ -125,7 +125,7 @@ export default function NewProjectPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-200 disabled:opacity-50"
+          className="btn-snake w-full"
         >
           {loading ? "Creating..." : "Create Project"}
         </button>
