@@ -53,11 +53,13 @@ jobs:
           {
             echo "You are an automated code agent running in a GitHub Actions workflow to address user feedback by making minimal, focused code changes."
             echo ""
-            echo "You are in a fresh checkout of the repository's default branch. Edit files directly. Do not run dev servers, tests, or anything that requires network access beyond reading code."
+            echo "You are in a fresh checkout of the repository's default branch. Edit files directly. Do not run dev servers or anything that requires network access beyond installing dependencies and running the project's build/typecheck."
             echo ""
             echo "Use Grep and Glob to locate relevant code before reading files. Do not speculatively read many files."
             echo ""
             echo "Make the smallest change that addresses the feedback. Keep to a handful of files. Do not refactor unrelated code. Do not add comments explaining the change. Do not format the whole file."
+            echo ""
+            echo "VERIFY BEFORE YOU FINISH: After making changes, run the project's typecheck or build to confirm the code compiles. Check package.json scripts for 'typecheck', 'build', or 'lint'; run the most relevant one. Use npm/pnpm/yarn based on the lockfile present. If errors appear, fix them. Do not finish with a broken build."
             echo ""
             echo "When you are finished, write a short (1-3 sentence) human-readable summary of what you changed to /tmp/pr_summary.txt. Do not include a title or code blocks in the summary."
             echo ""
@@ -76,9 +78,59 @@ jobs:
         with:
           anthropic_api_key: \${{ secrets.FEEDBACKIQ_ANTHROPIC_KEY }}
           prompt_file: /tmp/prompt.md
-          max_turns: "25"
-          allowed_tools: "Read,Edit,Write,MultiEdit,Grep,Glob,TodoWrite,Bash(git diff:*),Bash(ls:*)"
-          timeout_minutes: "20"
+          max_turns: "40"
+          allowed_tools: "Read,Edit,Write,MultiEdit,Grep,Glob,TodoWrite,Bash(git diff:*),Bash(ls:*),Bash(cat:*),Bash(npm:*),Bash(pnpm:*),Bash(yarn:*),Bash(npx:*),Bash(node:*)"
+          timeout_minutes: "25"
+
+      - name: Verify build
+        id: verify
+        run: |
+          set -uo pipefail
+          if [ ! -f package.json ]; then
+            echo "No package.json — skipping verify"
+            exit 0
+          fi
+
+          if [ -f pnpm-lock.yaml ]; then PM=pnpm
+          elif [ -f yarn.lock ]; then PM=yarn
+          else PM=npm
+          fi
+
+          SCRIPT=""
+          if jq -e '.scripts.typecheck' package.json >/dev/null 2>&1; then
+            SCRIPT=typecheck
+          elif jq -e '.scripts.build' package.json >/dev/null 2>&1; then
+            SCRIPT=build
+          fi
+
+          if [ -z "$SCRIPT" ]; then
+            echo "No typecheck/build script — skipping verify"
+            exit 0
+          fi
+
+          case "$PM" in
+            pnpm)
+              corepack enable
+              pnpm install --frozen-lockfile || pnpm install
+              pnpm run "$SCRIPT" 2>&1 | tee /tmp/verify.log
+              ;;
+            yarn)
+              corepack enable
+              yarn install --frozen-lockfile || yarn install
+              yarn run "$SCRIPT" 2>&1 | tee /tmp/verify.log
+              ;;
+            *)
+              npm ci || npm install
+              npm run "$SCRIPT" 2>&1 | tee /tmp/verify.log
+              ;;
+          esac
+          STATUS=\${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ]; then
+            tail -c 4000 /tmp/verify.log > /tmp/verify_tail.log
+            echo "status=failed" >> "$GITHUB_OUTPUT"
+            exit "$STATUS"
+          fi
+          echo "status=ok" >> "$GITHUB_OUTPUT"
 
       - name: Commit, push, create PR
         id: pr
@@ -149,6 +201,7 @@ jobs:
           PR_URL: \${{ steps.pr.outputs.pr_url }}
           PR_NUMBER: \${{ steps.pr.outputs.pr_number }}
           CLAUDE_CONCLUSION: \${{ steps.claude.outputs.conclusion }}
+          VERIFY_STATUS: \${{ steps.verify.outputs.status }}
         run: |
           set -u
           if [ "\${PR_STATUS:-}" = "pr_created" ]; then
@@ -159,9 +212,13 @@ jobs:
               --argjson num "\${PR_NUMBER:-null}" \\
               '{feedback_id:$fid, status:"pr_created", pr_url:$url, pr_number:$num, branch_name:$branch}')
           else
+            LOG="claude conclusion: \${CLAUDE_CONCLUSION:-unknown}; verify: \${VERIFY_STATUS:-skipped}; pr step: \${PR_STATUS:-unknown}"
+            if [ -f /tmp/verify_tail.log ]; then
+              LOG="$LOG"$'\\n\\n--- build output (tail) ---\\n'"$(cat /tmp/verify_tail.log)"
+            fi
             BODY=$(jq -n \\
               --arg fid "$FEEDBACK_ID" \\
-              --arg log "claude conclusion: \${CLAUDE_CONCLUSION:-unknown}; pr step: \${PR_STATUS:-unknown}" \\
+              --arg log "$LOG" \\
               '{feedback_id:$fid, status:"closed", agent_log:$log}')
           fi
           curl -sS -X POST "$CALLBACK_URL" \\
