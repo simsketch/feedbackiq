@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getInstallationOctokit } from "@/lib/github";
+import { getInstallationOctokit, mintInstallationToken } from "@/lib/github";
 import {
   ensureWorkflowInstalled,
   ensureSecretSet,
@@ -83,6 +83,10 @@ export async function POST(request: Request) {
         const callbackUrl =
           "https://app.feedbackiq.app/api/webhooks/agent-complete";
 
+        const installationToken = await mintInstallationToken(
+          project.company.githubInstallationId
+        );
+
         const dispatch = await triggerWorkflow(
           octokit,
           owner,
@@ -91,7 +95,8 @@ export async function POST(request: Request) {
           content,
           source_url || null,
           project.defaultBranch,
-          callbackUrl
+          callbackUrl,
+          installationToken
         );
 
         await prisma.pullRequest.update({

@@ -17,3 +17,14 @@ export async function getInstallationOctokit(installationId: number) {
   const app = getGitHubApp();
   return app.getInstallationOctokit(installationId);
 }
+
+export async function mintInstallationToken(
+  installationId: number
+): Promise<string> {
+  const app = getGitHubApp();
+  const { data } = await app.octokit.request(
+    "POST /app/installations/{installation_id}/access_tokens",
+    { installation_id: installationId }
+  );
+  return data.token;
+}

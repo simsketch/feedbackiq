@@ -22,6 +22,8 @@ on:
         required: true
       callback_secret:
         required: true
+      installation_token:
+        required: true
 
 jobs:
   generate-pr:
@@ -31,6 +33,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: \${{ inputs.installation_token }}
 
       - name: Prepare branch and prompt
         id: prep
@@ -79,7 +83,7 @@ jobs:
       - name: Commit, push, create PR
         id: pr
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: \${{ inputs.installation_token }}
           FEEDBACK_CONTENT: \${{ inputs.feedback_content }}
           SOURCE_URL: \${{ inputs.source_url }}
           DEFAULT_BRANCH: \${{ inputs.default_branch }}
@@ -262,6 +266,7 @@ export async function triggerWorkflow(
   sourceUrl: string | null,
   defaultBranch: string,
   callbackUrl: string,
+  installationToken: string,
   justCreated: boolean = false
 ): Promise<WorkflowDispatchResult> {
   const callbackSecret = process.env.GITHUB_APP_WEBHOOK_SECRET;
@@ -292,6 +297,7 @@ export async function triggerWorkflow(
             default_branch: defaultBranch,
             callback_url: callbackUrl,
             callback_secret: callbackSecret,
+            installation_token: installationToken,
           },
         }
       );
