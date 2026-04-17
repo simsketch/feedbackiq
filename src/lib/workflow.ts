@@ -68,7 +68,7 @@ jobs:
 
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-base-action@v1
+        uses: anthropics/claude-code-base-action@v0.0.63
         with:
           anthropic_api_key: \${{ secrets.FEEDBACKIQ_ANTHROPIC_KEY }}
           prompt_file: /tmp/prompt.md
