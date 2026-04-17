@@ -72,7 +72,9 @@ jobs:
         with:
           anthropic_api_key: \${{ secrets.FEEDBACKIQ_ANTHROPIC_KEY }}
           prompt_file: /tmp/prompt.md
-          claude_args: '--max-turns 25 --allowed-tools Read,Edit,Write,Grep,Glob,TodoWrite'
+          max_turns: "25"
+          allowed_tools: "Read,Edit,Write,MultiEdit,Grep,Glob,TodoWrite,Bash(git diff:*),Bash(ls:*)"
+          timeout_minutes: "20"
 
       - name: Commit, push, create PR
         id: pr
