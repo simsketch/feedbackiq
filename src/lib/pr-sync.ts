@@ -7,7 +7,11 @@ export async function syncOpenPRsForProject(projectId: string): Promise<void> {
     where: { id: projectId },
     include: { company: true },
   });
-  if (!project?.company.githubInstallationId) return;
+  if (!project) return;
+
+  await reconcileStaleFeedbackStatus(projectId);
+
+  if (!project.company.githubInstallationId) return;
 
   const [owner, repo] = project.githubRepo.split("/");
   if (!owner || !repo) return;
@@ -64,6 +68,44 @@ export async function syncOpenPRsForProject(projectId: string): Promise<void> {
       await maybeGenerateChangelogEntry(prId);
     } catch (err) {
       console.error("changelog generation failed", prId, err);
+    }
+  }
+}
+
+async function reconcileStaleFeedbackStatus(projectId: string): Promise<void> {
+  const stale = await prisma.feedback.findMany({
+    where: {
+      projectId,
+      status: { in: ["pr_created", "generating"] },
+      pullRequests: {
+        some: { status: { in: ["merged", "closed"] } },
+      },
+    },
+    select: {
+      id: true,
+      pullRequests: {
+        select: { id: true, status: true },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  for (const fb of stale) {
+    await prisma.feedback.update({
+      where: { id: fb.id },
+      data: { status: "closed" },
+    });
+    const mergedPr = fb.pullRequests.find((pr) => pr.status === "merged");
+    if (mergedPr) {
+      try {
+        await maybeGenerateChangelogEntry(mergedPr.id);
+      } catch (err) {
+        console.error(
+          "reconcile changelog generation failed",
+          mergedPr.id,
+          err
+        );
+      }
     }
   }
 }
