@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getGitHubApp } from "@/lib/github";
+import { maybeGenerateChangelogEntry } from "@/lib/changelog";
 import { createHmac, timingSafeEqual } from "crypto";
 
 async function verifySignature(
@@ -80,11 +80,14 @@ export async function POST(request: NextRequest) {
       data: { status: newPrStatus },
     });
 
-    // Update associated feedback status to closed if PR is merged or closed
     await prisma.feedback.update({
       where: { id: pr.feedbackId },
       data: { status: "closed" },
     });
+
+    if (newPrStatus === "merged") {
+      await maybeGenerateChangelogEntry(pr.id);
+    }
   }
 
   return NextResponse.json({ ok: true });
