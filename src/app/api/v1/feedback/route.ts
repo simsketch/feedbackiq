@@ -6,6 +6,7 @@ import {
   ensureSecretSet,
   triggerWorkflow,
 } from "@/lib/workflow";
+import { autoTagFeedback } from "@/lib/autotag";
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin") || "*";
@@ -52,6 +53,10 @@ export async function POST(request: Request) {
       sourceUrl: source_url || null,
       status: project.autoGeneratePrs ? "generating" : "new",
     },
+  });
+
+  autoTagFeedback(feedback.id).catch((err) => {
+    console.error("autoTagFeedback failed:", err);
   });
 
   if (project.autoGeneratePrs && project.company.githubInstallationId) {

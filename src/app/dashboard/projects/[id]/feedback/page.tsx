@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import FeedbackChips from "@/components/feedback-chips";
 
 const statusBadge: Record<string, string> = {
   new: "bg-cyan-500/10 text-cyan-400",
@@ -57,7 +58,7 @@ export default async function FeedbackListPage({
         </div>
       ) : (
         <div className="space-y-4">
-          {feedback.map((item: { id: string; content: string; submitterEmail: string | null; createdAt: Date; status: string }) => (
+          {feedback.map((item) => (
             <Link
               key={item.id}
               href={`/dashboard/projects/${project.id}/feedback/${item.id}`}
@@ -70,6 +71,13 @@ export default async function FeedbackListPage({
                       ? item.content.slice(0, 200) + "..."
                       : item.content}
                   </p>
+                  <div className="mt-2">
+                    <FeedbackChips
+                      priority={item.priority}
+                      category={item.category}
+                      tags={item.tags}
+                    />
+                  </div>
                   <div className="mt-2 flex items-center gap-4 text-sm text-zinc-500">
                     {item.submitterEmail && <span>{item.submitterEmail}</span>}
                     <span>

@@ -36,6 +36,15 @@ enum PullRequestStatus {
   @@schema("feedbackiq")
 }
 
+enum FeedbackPriority {
+  low
+  medium
+  high
+  urgent
+
+  @@schema("feedbackiq")
+}
+
 model Company {
   id                    String    @id @default(uuid())
   name                  String
@@ -89,14 +98,17 @@ model Project {
 }
 
 model Feedback {
-  id             String         @id @default(uuid())
+  id             String            @id @default(uuid())
   projectId      String
   content        String
   submitterEmail String?
   sourceUrl      String?
-  status         FeedbackStatus @default(new)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  status         FeedbackStatus    @default(new)
+  tags           String[]          @default([])
+  priority       FeedbackPriority?
+  category       String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   project      Project       @relation(fields: [projectId], references: [id])
   pullRequests PullRequest[]

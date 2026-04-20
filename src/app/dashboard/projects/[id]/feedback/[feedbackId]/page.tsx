@@ -4,6 +4,7 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import FeedbackRuns from "@/components/feedback-runs";
+import FeedbackChips from "@/components/feedback-chips";
 
 export default async function FeedbackDetailPage({
   params,
@@ -64,6 +65,15 @@ export default async function FeedbackDetailPage({
         <h1 className="text-2xl font-bold mb-4">
           <span className="gradient-text">Feedback</span>
         </h1>
+
+        <div className="mb-4">
+          <FeedbackChips
+            priority={feedback.priority}
+            category={feedback.category}
+            tags={feedback.tags}
+            size="md"
+          />
+        </div>
 
         <div className="prose max-w-none mb-6">
           <p className="whitespace-pre-wrap text-zinc-300">
