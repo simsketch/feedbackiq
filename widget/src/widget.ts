@@ -361,7 +361,10 @@ function contrastOn(color: string): string {
     }
 
     private async loadTheme(): Promise<void> {
-      if (!siteKey) return;
+      if (!siteKey) {
+        this.host.setAttribute("data-fiq-ready", "");
+        return;
+      }
       try {
         const res = await fetch(
           `${API_ORIGIN}/api/v1/config?site_key=${encodeURIComponent(siteKey)}`,
@@ -376,6 +379,8 @@ function contrastOn(color: string): string {
         if (data.widget) this.applyWidgetConfig(data.widget);
       } catch {
         // widget keeps default appearance
+      } finally {
+        this.host.setAttribute("data-fiq-ready", "");
       }
     }
 

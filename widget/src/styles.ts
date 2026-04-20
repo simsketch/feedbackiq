@@ -9,6 +9,12 @@ export const STYLES = `
     --fiq-radius: 12px;
     --fiq-radius-sm: 8px;
     --fiq-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+
+  :host([data-fiq-ready]) {
+    opacity: 1;
   }
 
   * {
