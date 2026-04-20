@@ -1,21 +1,39 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { userId } = await auth();
+  const isSignedIn = !!userId;
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="border-b">
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
           <span className="font-bold text-lg">FeedbackIQ</span>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-gray-600 hover:text-black">
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
-            >
-              Get Started
-            </Link>
+            {isSignedIn ? (
+              <Link
+                href="/dashboard"
+                className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm text-gray-600 hover:text-black"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -30,10 +48,10 @@ export default function HomePage() {
             Our AI agent reads your codebase and creates a PR — automatically.
           </p>
           <Link
-            href="/signup"
+            href={isSignedIn ? "/dashboard" : "/signup"}
             className="inline-block bg-black text-white px-8 py-3 rounded-md text-lg hover:bg-gray-800"
           >
-            Start for free
+            {isSignedIn ? "Go to dashboard" : "Start for free"}
           </Link>
         </section>
 
@@ -66,10 +84,10 @@ export default function HomePage() {
         <section className="py-16 text-center border-t">
           <h2 className="text-2xl font-bold mb-4">Ready to ship faster?</h2>
           <Link
-            href="/signup"
+            href={isSignedIn ? "/dashboard" : "/signup"}
             className="inline-block bg-black text-white px-8 py-3 rounded-md hover:bg-gray-800"
           >
-            Get started
+            {isSignedIn ? "Open dashboard" : "Get started"}
           </Link>
         </section>
       </main>
