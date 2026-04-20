@@ -39,6 +39,7 @@ export async function GET(
   const openPrs = feedback.pullRequests.filter((pr) => pr.status === "open");
 
   let flippedToTerminal = false;
+  let flippedToShipped = false;
   const mergedPrIds: string[] = [];
 
   if (
@@ -73,6 +74,7 @@ export async function GET(
               if (newStatus === "merged") {
                 mergedPrIds.push(pr.id);
               }
+              flippedToShipped = true;
             }
           } catch (err) {
             console.error("open pr poll failed", pr.id, err);
@@ -193,6 +195,14 @@ export async function GET(
     feedback.status === "generating" &&
     !openPrExists &&
     (flippedToTerminal || isStaleGenerating)
+  ) {
+    await prisma.feedback.update({
+      where: { id: feedback.id },
+      data: { status: "closed" },
+    });
+  } else if (
+    flippedToShipped &&
+    feedback.status !== "closed"
   ) {
     await prisma.feedback.update({
       where: { id: feedback.id },

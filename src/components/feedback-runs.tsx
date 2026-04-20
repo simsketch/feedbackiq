@@ -50,7 +50,8 @@ export default function FeedbackRuns({
   const [runs, setRuns] = useState<PullRequestRow[]>(initialRuns);
 
   const shouldPoll =
-    status === "generating" || runs.some((r) => r.status === "pending");
+    status === "generating" ||
+    runs.some((r) => r.status === "pending" || r.status === "open");
 
   useEffect(() => {
     if (!shouldPoll) return;
