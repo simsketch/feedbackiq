@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import WidgetSnippet from "@/components/widget-snippet";
 import ProjectSettings from "@/components/project-settings";
 import ThemeSettings from "@/components/theme-settings";
+import RoadmapSettings from "@/components/roadmap-settings";
 
 export default async function ProjectDetailPage({
   params,
@@ -88,6 +89,11 @@ export default async function ProjectDetailPage({
             borderRadius: project.themeBorderRadius,
           }}
           initialUpdatedAt={project.themeUpdatedAt}
+        />
+        <RoadmapSettings
+          projectId={project.id}
+          initialEnabled={project.publicRoadmap}
+          initialSlug={project.publicSlug}
         />
         <ProjectSettings
           projectId={project.id}

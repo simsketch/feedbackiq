@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { generateProjectSlug } from "@/lib/slug";
 
 export async function GET(
   _request: Request,
@@ -51,6 +52,13 @@ export async function PATCH(
   if (body.autoGeneratePrs !== undefined) data.autoGeneratePrs = body.autoGeneratePrs;
   if (body.defaultBranch !== undefined) data.defaultBranch = body.defaultBranch;
   if (body.websiteUrl !== undefined) data.websiteUrl = body.websiteUrl || null;
+
+  if (body.publicRoadmap !== undefined) {
+    data.publicRoadmap = !!body.publicRoadmap;
+    if (body.publicRoadmap && !existing.publicSlug) {
+      data.publicSlug = await generateProjectSlug(existing.name);
+    }
+  }
 
   const project = await prisma.project.update({
     where: { id },

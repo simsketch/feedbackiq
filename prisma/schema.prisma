@@ -80,6 +80,8 @@ model Project {
   githubRepo        String
   defaultBranch     String    @default("main")
   autoGeneratePrs   Boolean   @default(false)
+  publicRoadmap     Boolean   @default(false)
+  publicSlug        String?   @unique
   siteKey           String    @unique @default(uuid())
   websiteUrl        String?
   themePrimary      String?
@@ -110,12 +112,28 @@ model Feedback {
   screenshotUrl  String?
   pageTitle      String?
   userAgent      String?
+  isPublic       Boolean           @default(true)
+  upvoteCount    Int               @default(0)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  project      Project       @relation(fields: [projectId], references: [id])
+  project      Project          @relation(fields: [projectId], references: [id])
   pullRequests PullRequest[]
+  upvotes      FeedbackUpvote[]
 
+  @@index([projectId, status])
+  @@schema("feedbackiq")
+}
+
+model FeedbackUpvote {
+  id         String   @id @default(uuid())
+  feedbackId String
+  voterHash  String
+  createdAt  DateTime @default(now())
+
+  feedback Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@unique([feedbackId, voterHash])
   @@schema("feedbackiq")
 }
 
