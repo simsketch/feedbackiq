@@ -82,6 +82,7 @@ model Project {
   autoGeneratePrs   Boolean   @default(false)
   publicRoadmap     Boolean   @default(false)
   publicChangelog   Boolean   @default(false)
+  changelogAutoPublish Boolean @default(true)
   publicSlug        String?   @unique
   siteKey           String    @unique @default(uuid())
   websiteUrl        String?
@@ -115,20 +116,30 @@ model Project {
   @@schema("feedbackiq")
 }
 
+enum ChangelogStatus {
+  draft
+  published
+
+  @@schema("feedbackiq")
+}
+
 model ChangelogEntry {
-  id          String   @id @default(uuid())
-  projectId   String
-  feedbackId  String?
+  id            String          @id @default(uuid())
+  projectId     String
+  feedbackId    String?
   pullRequestId String?
-  title       String
-  body        String
-  prUrl       String?
-  publishedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
+  title         String
+  body          String
+  prUrl         String?
+  status        ChangelogStatus @default(draft)
+  publishedAt   DateTime        @default(now())
+  notifiedAt    DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now()) @updatedAt
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@index([projectId, publishedAt])
+  @@index([projectId, status, publishedAt])
   @@schema("feedbackiq")
 }
 

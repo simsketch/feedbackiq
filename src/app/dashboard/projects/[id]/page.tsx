@@ -53,7 +53,7 @@ export default async function ProjectDetailPage({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 mb-8">
+      <div className="grid gap-4 sm:grid-cols-3 mb-8">
         <Link
           href={`/dashboard/projects/${project.id}/feedback`}
           className="glow-card block rounded-xl border border-zinc-800 bg-[#18181b] p-6 hover:border-zinc-700 transition-colors"
@@ -74,6 +74,16 @@ export default async function ProjectDetailPage({
           </h3>
           <p className="mt-1 text-sm text-zinc-400">
             View generated pull requests
+          </p>
+        </Link>
+
+        <Link
+          href={`/dashboard/projects/${project.id}/changelog`}
+          className="glow-card block rounded-xl border border-zinc-800 bg-[#18181b] p-6 hover:border-zinc-700 transition-colors"
+        >
+          <h3 className="text-lg font-semibold text-zinc-100">Changelog</h3>
+          <p className="mt-1 text-sm text-zinc-400">
+            Edit and publish entries
           </p>
         </Link>
       </div>

@@ -1,7 +1,29 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await prisma.project.findFirst({
+    where: { publicSlug: slug, publicChangelog: true },
+    select: { name: true },
+  });
+  if (!project) return {};
+  return {
+    title: `${project.name} changelog`,
+    alternates: {
+      types: {
+        "application/atom+xml": `/c/${slug}/feed.xml`,
+      },
+    },
+  };
+}
 
 export default async function PublicChangelogPage({
   params,
@@ -18,7 +40,7 @@ export default async function PublicChangelogPage({
   if (!project) notFound();
 
   const entries = await prisma.changelogEntry.findMany({
-    where: { projectId: project.id },
+    where: { projectId: project.id, status: "published" },
     orderBy: { publishedAt: "desc" },
     take: 100,
   });
@@ -80,14 +102,22 @@ export default async function PublicChangelogPage({
           </div>
         )}
 
-        <footer className="mt-16 text-center text-xs text-zinc-600">
-          Powered by{" "}
+        <footer className="mt-16 flex flex-col items-center gap-2 text-center text-xs text-zinc-600">
           <a
-            href="https://feedbackiq.app"
-            className="text-cyan-500 hover:text-cyan-400"
+            href={`/c/${slug}/feed.xml`}
+            className="text-zinc-500 hover:text-zinc-300"
           >
-            FeedbackIQ
+            Subscribe via RSS
           </a>
+          <div>
+            Powered by{" "}
+            <a
+              href="https://feedbackiq.app"
+              className="text-cyan-500 hover:text-cyan-400"
+            >
+              FeedbackIQ
+            </a>
+          </div>
         </footer>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import GenerateChangelogButton from "@/components/generate-changelog-button";
 
 const statusBadge: Record<string, string> = {
   open: "bg-green-500/10 text-green-400",
@@ -36,6 +37,17 @@ export default async function PullRequestsPage({
     },
     orderBy: { createdAt: "desc" },
   });
+
+  const entriesByPr = await prisma.changelogEntry.findMany({
+    where: {
+      projectId: id,
+      pullRequestId: { in: pullRequests.map((pr) => pr.id) },
+    },
+    select: { pullRequestId: true },
+  });
+  const prIdsWithEntry = new Set(
+    entriesByPr.map((e) => e.pullRequestId).filter((id): id is string => !!id)
+  );
 
   return (
     <div>
@@ -97,6 +109,14 @@ export default async function PullRequestsPage({
                   <p className="mt-2 text-xs text-zinc-500">
                     {new Date(pr.createdAt).toLocaleDateString()}
                   </p>
+                  {pr.status === "merged" && (
+                    <div className="mt-3">
+                      <GenerateChangelogButton
+                        pullRequestId={pr.id}
+                        hasExistingEntry={prIdsWithEntry.has(pr.id)}
+                      />
+                    </div>
+                  )}
                 </div>
                 <span
                   className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
