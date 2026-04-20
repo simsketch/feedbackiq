@@ -8,7 +8,7 @@ function publicUrl(slug: string | null): string | null {
   if (!slug) return null;
   const base =
     process.env.NEXT_PUBLIC_APP_URL || "https://www.feedbackiq.app";
-  return `${base.replace(/\/$/, "")}/c/${slug}`;
+  return `${base.replace(/\/$/, "")}/changelog/${slug}`;
 }
 
 async function generateTitleAndBody(

@@ -44,7 +44,7 @@ export default async function ChangelogManagementPage({
 
   const publicUrl =
     project.publicChangelog && project.publicSlug
-      ? `/c/${project.publicSlug}`
+      ? `/changelog/${project.publicSlug}`
       : null;
 
   return (

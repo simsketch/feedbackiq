@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { syncOpenPRsForProject } from "@/lib/pr-sync";
 
 export const revalidate = 60;
 
@@ -19,7 +20,7 @@ export async function generateMetadata({
     title: `${project.name} changelog`,
     alternates: {
       types: {
-        "application/atom+xml": `/c/${slug}/feed.xml`,
+        "application/atom+xml": `/changelog/${slug}/feed.xml`,
       },
     },
   };
@@ -38,6 +39,8 @@ export default async function PublicChangelogPage({
   });
 
   if (!project) notFound();
+
+  await syncOpenPRsForProject(project.id);
 
   const entries = await prisma.changelogEntry.findMany({
     where: { projectId: project.id, status: "published" },
@@ -104,7 +107,7 @@ export default async function PublicChangelogPage({
 
         <footer className="mt-16 flex flex-col items-center gap-2 text-center text-xs text-zinc-600">
           <a
-            href={`/c/${slug}/feed.xml`}
+            href={`/changelog/${slug}/feed.xml`}
             className="text-zinc-500 hover:text-zinc-300"
           >
             Subscribe via RSS

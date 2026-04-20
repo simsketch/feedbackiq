@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import UpvoteButton from "@/components/upvote-button";
+import { syncOpenPRsForProject } from "@/lib/pr-sync";
 
 export const revalidate = 60;
 
@@ -31,6 +32,8 @@ export default async function PublicRoadmapPage({
   });
 
   if (!project) notFound();
+
+  await syncOpenPRsForProject(project.id);
 
   const feedback = await prisma.feedback.findMany({
     where: { projectId: project.id, isPublic: true },

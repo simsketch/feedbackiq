@@ -39,8 +39,8 @@ export async function GET(
   });
 
   const origin = baseUrl();
-  const feedUrl = `${origin}/c/${slug}/feed.xml`;
-  const pageUrl = `${origin}/c/${slug}`;
+  const feedUrl = `${origin}/changelog/${slug}/feed.xml`;
+  const pageUrl = `${origin}/changelog/${slug}`;
   const updated =
     entries[0]?.publishedAt.toISOString() || new Date().toISOString();
 

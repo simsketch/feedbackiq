@@ -20,7 +20,7 @@ export default function ChangelogSettings({
 
   const origin =
     typeof window !== "undefined" ? window.location.origin : "";
-  const publicUrl = slug ? `${origin}/c/${slug}` : null;
+  const publicUrl = slug ? `${origin}/changelog/${slug}` : null;
 
   async function handleToggle() {
     setSaving(true);

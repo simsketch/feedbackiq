@@ -20,7 +20,7 @@ export default function RoadmapSettings({
 
   const origin =
     typeof window !== "undefined" ? window.location.origin : "";
-  const publicUrl = slug ? `${origin}/r/${slug}` : null;
+  const publicUrl = slug ? `${origin}/roadmap/${slug}` : null;
 
   async function handleToggle() {
     setSaving(true);
