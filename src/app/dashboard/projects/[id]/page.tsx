@@ -86,6 +86,16 @@ export default async function ProjectDetailPage({
           initialLabel={project.widgetLabel}
           initialSize={project.widgetSize}
           initialIcon={project.widgetIcon}
+          initialHeaderTitle={project.widgetHeaderTitle}
+          initialHeaderSubtitle={project.widgetHeaderSubtitle}
+          initialContentPlaceholder={project.widgetContentPlaceholder}
+          initialEmailPlaceholder={project.widgetEmailPlaceholder}
+          initialAttachText={project.widgetAttachText}
+          initialSubmitText={project.widgetSubmitText}
+          initialSuccessMessage={project.widgetSuccessMessage}
+          initialShowEmail={project.widgetShowEmail}
+          initialRequireEmail={project.widgetRequireEmail}
+          initialShowScreenshot={project.widgetShowScreenshot}
         />
         <ThemeSettings
           projectId={project.id}

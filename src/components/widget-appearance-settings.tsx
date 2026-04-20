@@ -66,7 +66,27 @@ interface Props {
   initialLabel: string | null;
   initialSize: string;
   initialIcon: string;
+  initialHeaderTitle: string | null;
+  initialHeaderSubtitle: string | null;
+  initialContentPlaceholder: string | null;
+  initialEmailPlaceholder: string | null;
+  initialAttachText: string | null;
+  initialSubmitText: string | null;
+  initialSuccessMessage: string | null;
+  initialShowEmail: boolean;
+  initialRequireEmail: boolean;
+  initialShowScreenshot: boolean;
 }
+
+const COPY_DEFAULTS = {
+  headerTitle: "Share your feedback",
+  headerSubtitle: "Be specific so our AI can build it",
+  contentPlaceholder: "What's on your mind?",
+  emailPlaceholder: "Email (optional)",
+  attachText: "Attach screenshot",
+  submitText: "Submit Feedback",
+  successMessage: "Thank you! Your feedback has been submitted.",
+};
 
 export default function WidgetAppearanceSettings({
   projectId,
@@ -74,6 +94,16 @@ export default function WidgetAppearanceSettings({
   initialLabel,
   initialSize,
   initialIcon,
+  initialHeaderTitle,
+  initialHeaderSubtitle,
+  initialContentPlaceholder,
+  initialEmailPlaceholder,
+  initialAttachText,
+  initialSubmitText,
+  initialSuccessMessage,
+  initialShowEmail,
+  initialRequireEmail,
+  initialShowScreenshot,
 }: Props) {
   const [position, setPosition] = useState<Position>(
     (POSITIONS.find((p) => p.value === initialPosition)?.value ??
@@ -86,6 +116,24 @@ export default function WidgetAppearanceSettings({
   const [icon, setIcon] = useState<Icon>(
     (ICONS.find((i) => i.value === initialIcon)?.value ?? "chat") as Icon
   );
+  const [headerTitle, setHeaderTitle] = useState(initialHeaderTitle ?? "");
+  const [headerSubtitle, setHeaderSubtitle] = useState(
+    initialHeaderSubtitle ?? ""
+  );
+  const [contentPlaceholder, setContentPlaceholder] = useState(
+    initialContentPlaceholder ?? ""
+  );
+  const [emailPlaceholder, setEmailPlaceholder] = useState(
+    initialEmailPlaceholder ?? ""
+  );
+  const [attachText, setAttachText] = useState(initialAttachText ?? "");
+  const [submitText, setSubmitText] = useState(initialSubmitText ?? "");
+  const [successMessage, setSuccessMessage] = useState(
+    initialSuccessMessage ?? ""
+  );
+  const [showEmail, setShowEmail] = useState(initialShowEmail);
+  const [requireEmail, setRequireEmail] = useState(initialRequireEmail);
+  const [showScreenshot, setShowScreenshot] = useState(initialShowScreenshot);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -101,6 +149,16 @@ export default function WidgetAppearanceSettings({
           widgetLabel: label.trim() || null,
           widgetSize: size,
           widgetIcon: icon,
+          widgetHeaderTitle: headerTitle,
+          widgetHeaderSubtitle: headerSubtitle,
+          widgetContentPlaceholder: contentPlaceholder,
+          widgetEmailPlaceholder: emailPlaceholder,
+          widgetAttachText: attachText,
+          widgetSubmitText: submitText,
+          widgetSuccessMessage: successMessage,
+          widgetShowEmail: showEmail,
+          widgetRequireEmail: requireEmail,
+          widgetShowScreenshot: showScreenshot,
         }),
       });
       if (res.ok) {
@@ -211,6 +269,89 @@ export default function WidgetAppearanceSettings({
                 {s}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 pt-5">
+          <h4 className="text-sm font-semibold text-zinc-100 mb-1">
+            Copy
+          </h4>
+          <p className="text-xs text-zinc-500 mb-4">
+            Override the text inside the feedback form. Leave blank to use defaults.
+          </p>
+          <div className="space-y-4">
+            {(
+              [
+                ["headerTitle", headerTitle, setHeaderTitle, "Header title", 60],
+                ["headerSubtitle", headerSubtitle, setHeaderSubtitle, "Header subtitle", 120],
+                ["contentPlaceholder", contentPlaceholder, setContentPlaceholder, "Textarea placeholder", 120],
+                ["emailPlaceholder", emailPlaceholder, setEmailPlaceholder, "Email field placeholder", 60],
+                ["attachText", attachText, setAttachText, "Attach button text", 40],
+                ["submitText", submitText, setSubmitText, "Submit button text", 40],
+                ["successMessage", successMessage, setSuccessMessage, "Success message", 200],
+              ] as const
+            ).map(([key, val, setter, label, max]) => (
+              <div key={key}>
+                <label
+                  htmlFor={`widget-${key}`}
+                  className="block text-xs font-medium text-zinc-300 mb-1"
+                >
+                  {label}
+                </label>
+                <input
+                  id={`widget-${key}`}
+                  type="text"
+                  maxLength={max}
+                  value={val}
+                  onChange={(e) => setter(e.target.value)}
+                  placeholder={COPY_DEFAULTS[key]}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-cyan-500 focus:outline-none"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 pt-5">
+          <h4 className="text-sm font-semibold text-zinc-100 mb-1">
+            Fields
+          </h4>
+          <p className="text-xs text-zinc-500 mb-4">
+            Choose which fields appear in the form.
+          </p>
+          <div className="space-y-3">
+            <label className="flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 py-2.5 text-sm text-zinc-200">
+              <span>Email field</span>
+              <input
+                type="checkbox"
+                checked={showEmail}
+                onChange={(e) => setShowEmail(e.target.checked)}
+                className="h-4 w-4 accent-cyan-500"
+              />
+            </label>
+            <label
+              className={`flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 py-2.5 text-sm ${
+                showEmail ? "text-zinc-200" : "text-zinc-600"
+              }`}
+            >
+              <span>Require email</span>
+              <input
+                type="checkbox"
+                checked={requireEmail}
+                disabled={!showEmail}
+                onChange={(e) => setRequireEmail(e.target.checked)}
+                className="h-4 w-4 accent-cyan-500"
+              />
+            </label>
+            <label className="flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 py-2.5 text-sm text-zinc-200">
+              <span>Screenshot attach button</span>
+              <input
+                type="checkbox"
+                checked={showScreenshot}
+                onChange={(e) => setShowScreenshot(e.target.checked)}
+                className="h-4 w-4 accent-cyan-500"
+              />
+            </label>
           </div>
         </div>
 

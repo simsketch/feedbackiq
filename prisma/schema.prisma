@@ -91,10 +91,20 @@ model Project {
   themeFontFamily   String?
   themeBorderRadius String?
   themeUpdatedAt    DateTime?
-  widgetPosition    String    @default("bottom-right")
-  widgetLabel       String?
-  widgetSize        String    @default("default")
-  widgetIcon        String    @default("chat")
+  widgetPosition         String    @default("bottom-right")
+  widgetLabel            String?
+  widgetSize             String    @default("default")
+  widgetIcon             String    @default("chat")
+  widgetHeaderTitle      String?
+  widgetHeaderSubtitle   String?
+  widgetContentPlaceholder String?
+  widgetEmailPlaceholder String?
+  widgetAttachText       String?
+  widgetSubmitText       String?
+  widgetSuccessMessage   String?
+  widgetShowEmail        Boolean   @default(true)
+  widgetRequireEmail     Boolean   @default(false)
+  widgetShowScreenshot   Boolean   @default(true)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 

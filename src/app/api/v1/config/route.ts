@@ -42,6 +42,16 @@ export async function GET(request: Request) {
       widgetLabel: true,
       widgetSize: true,
       widgetIcon: true,
+      widgetHeaderTitle: true,
+      widgetHeaderSubtitle: true,
+      widgetContentPlaceholder: true,
+      widgetEmailPlaceholder: true,
+      widgetAttachText: true,
+      widgetSubmitText: true,
+      widgetSuccessMessage: true,
+      widgetShowEmail: true,
+      widgetRequireEmail: true,
+      widgetShowScreenshot: true,
     },
   });
 
@@ -66,6 +76,20 @@ export async function GET(request: Request) {
         label: project.widgetLabel,
         size: project.widgetSize,
         icon: project.widgetIcon,
+        copy: {
+          headerTitle: project.widgetHeaderTitle,
+          headerSubtitle: project.widgetHeaderSubtitle,
+          contentPlaceholder: project.widgetContentPlaceholder,
+          emailPlaceholder: project.widgetEmailPlaceholder,
+          attachText: project.widgetAttachText,
+          submitText: project.widgetSubmitText,
+          successMessage: project.widgetSuccessMessage,
+        },
+        fields: {
+          showEmail: project.widgetShowEmail,
+          requireEmail: project.widgetRequireEmail,
+          showScreenshot: project.widgetShowScreenshot,
+        },
       },
     },
     { headers }

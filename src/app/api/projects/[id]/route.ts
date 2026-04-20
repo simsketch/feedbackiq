@@ -94,6 +94,43 @@ export async function PATCH(
     data.widgetIcon = body.widgetIcon;
   }
 
+  const COPY_FIELDS: Array<{
+    key:
+      | "widgetHeaderTitle"
+      | "widgetHeaderSubtitle"
+      | "widgetContentPlaceholder"
+      | "widgetEmailPlaceholder"
+      | "widgetAttachText"
+      | "widgetSubmitText"
+      | "widgetSuccessMessage";
+    max: number;
+  }> = [
+    { key: "widgetHeaderTitle", max: 60 },
+    { key: "widgetHeaderSubtitle", max: 120 },
+    { key: "widgetContentPlaceholder", max: 120 },
+    { key: "widgetEmailPlaceholder", max: 60 },
+    { key: "widgetAttachText", max: 40 },
+    { key: "widgetSubmitText", max: 40 },
+    { key: "widgetSuccessMessage", max: 200 },
+  ];
+  for (const { key, max } of COPY_FIELDS) {
+    if (body[key] !== undefined) {
+      const trimmed =
+        typeof body[key] === "string" ? body[key].trim().slice(0, max) : "";
+      data[key] = trimmed || null;
+    }
+  }
+
+  if (body.widgetShowEmail !== undefined) {
+    data.widgetShowEmail = !!body.widgetShowEmail;
+  }
+  if (body.widgetRequireEmail !== undefined) {
+    data.widgetRequireEmail = !!body.widgetRequireEmail;
+  }
+  if (body.widgetShowScreenshot !== undefined) {
+    data.widgetShowScreenshot = !!body.widgetShowScreenshot;
+  }
+
   if (body.publicRoadmap !== undefined) {
     data.publicRoadmap = !!body.publicRoadmap;
     if (body.publicRoadmap && !existing.publicSlug) {

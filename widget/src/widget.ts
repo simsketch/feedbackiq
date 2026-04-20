@@ -24,12 +24,40 @@ type WidgetIcon =
   | "question"
   | "sparkle";
 
+interface WidgetCopy {
+  headerTitle: string | null;
+  headerSubtitle: string | null;
+  contentPlaceholder: string | null;
+  emailPlaceholder: string | null;
+  attachText: string | null;
+  submitText: string | null;
+  successMessage: string | null;
+}
+
+interface WidgetFields {
+  showEmail: boolean | null;
+  requireEmail: boolean | null;
+  showScreenshot: boolean | null;
+}
+
 interface WidgetConfig {
   position: WidgetPosition | null;
   label: string | null;
   size: "default" | "compact" | null;
   icon: WidgetIcon | null;
+  copy: WidgetCopy | null;
+  fields: WidgetFields | null;
 }
+
+const DEFAULT_COPY: Required<{ [K in keyof WidgetCopy]: string }> = {
+  headerTitle: "Share your feedback",
+  headerSubtitle: "Be specific so our AI can build it",
+  contentPlaceholder: "What's on your mind?",
+  emailPlaceholder: "Email (optional)",
+  attachText: "Attach screenshot",
+  submitText: "Submit Feedback",
+  successMessage: "Thank you! Your feedback has been submitted.",
+};
 
 const VALID_POSITIONS: WidgetPosition[] = [
   "bottom-right",
@@ -115,6 +143,12 @@ function contrastOn(color: string): string {
     private panelOpen = false;
     private attachedUrl: string | null = null;
     private attachedName: string | null = null;
+    private copy = { ...DEFAULT_COPY };
+    private fields = {
+      showEmail: true,
+      requireEmail: false,
+      showScreenshot: true,
+    };
 
     constructor() {
       this.host = document.createElement("div");
@@ -143,26 +177,26 @@ function contrastOn(color: string): string {
       panel.innerHTML = `
         <div class="fiq-form-view">
           <div class="fiq-header">
-            <h3>Share your feedback</h3>
-            <p>Be specific so our AI can build it</p>
+            <h3 class="fiq-header-title"></h3>
+            <p class="fiq-header-subtitle"></p>
           </div>
           <div class="fiq-body">
-            <textarea class="fiq-textarea" placeholder="What's on your mind?"></textarea>
-            <input type="email" class="fiq-email" placeholder="Email (optional)" />
+            <textarea class="fiq-textarea"></textarea>
+            <input type="email" class="fiq-email" />
             <button type="button" class="fiq-attach">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-              Attach screenshot
+              <span class="fiq-attach-label"></span>
             </button>
             <div class="fiq-attached fiq-hidden">
               <span class="fiq-attached-name"></span>
               <button type="button" class="fiq-attached-remove" aria-label="Remove">&times;</button>
             </div>
             <input type="file" class="fiq-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" />
-            <button class="fiq-submit">Submit Feedback</button>
+            <button class="fiq-submit"></button>
           </div>
         </div>
         <div class="fiq-success fiq-hidden">
-          <p>Thank you! Your feedback has been submitted.</p>
+          <p class="fiq-success-message"></p>
         </div>
       `;
       this.shadow.appendChild(panel);
@@ -179,6 +213,62 @@ function contrastOn(color: string): string {
         ".fiq-attached-remove"
       ) as HTMLButtonElement;
       removeBtn.addEventListener("click", () => this.clearAttachment());
+
+      this.applyCopy();
+      this.applyFields();
+    }
+
+    private text<K extends keyof WidgetCopy>(key: K): string {
+      return this.copy[key] || DEFAULT_COPY[key];
+    }
+
+    private applyCopy(): void {
+      const q = <T extends HTMLElement>(sel: string) =>
+        this.shadow.querySelector(sel) as T | null;
+
+      const title = q<HTMLElement>(".fiq-header-title");
+      if (title) title.textContent = this.text("headerTitle");
+
+      const subtitle = q<HTMLElement>(".fiq-header-subtitle");
+      if (subtitle) subtitle.textContent = this.text("headerSubtitle");
+
+      const textarea = q<HTMLTextAreaElement>(".fiq-textarea");
+      if (textarea) textarea.placeholder = this.text("contentPlaceholder");
+
+      const email = q<HTMLInputElement>(".fiq-email");
+      if (email) email.placeholder = this.text("emailPlaceholder");
+
+      const attachLabel = q<HTMLElement>(".fiq-attach-label");
+      if (attachLabel) attachLabel.textContent = this.text("attachText");
+
+      const submit = q<HTMLButtonElement>(".fiq-submit");
+      if (submit && !submit.disabled) submit.textContent = this.text("submitText");
+
+      const success = q<HTMLElement>(".fiq-success-message");
+      if (success) success.textContent = this.text("successMessage");
+    }
+
+    private applyFields(): void {
+      const email = this.shadow.querySelector(
+        ".fiq-email"
+      ) as HTMLInputElement | null;
+      if (email) {
+        email.style.display = this.fields.showEmail ? "" : "none";
+        email.required = !!this.fields.requireEmail && this.fields.showEmail;
+        email.type = "email";
+      }
+      const attach = this.shadow.querySelector(
+        ".fiq-attach"
+      ) as HTMLButtonElement | null;
+      if (attach) {
+        attach.style.display = this.fields.showScreenshot ? "" : "none";
+      }
+      const attached = this.shadow.querySelector(
+        ".fiq-attached"
+      ) as HTMLElement | null;
+      if (attached && !this.fields.showScreenshot) {
+        attached.classList.add("fiq-hidden");
+      }
     }
 
     private async handleFile(input: HTMLInputElement): Promise<void> {
@@ -219,7 +309,7 @@ function contrastOn(color: string): string {
         alert("Upload failed. Try again.");
       } finally {
         attachBtn.disabled = false;
-        attachBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot`;
+        attachBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> <span class="fiq-attach-label">${this.text("attachText")}</span>`;
       }
     }
 
@@ -284,6 +374,23 @@ function contrastOn(color: string): string {
         cfg.icon && VALID_ICONS.includes(cfg.icon) ? cfg.icon : "chat";
       this.host.setAttribute("data-fiq-icon", icon);
       const iconSvg = ICON_SVGS[icon];
+
+      if (cfg.copy) {
+        (Object.keys(DEFAULT_COPY) as Array<keyof WidgetCopy>).forEach((k) => {
+          const v = cfg.copy?.[k];
+          if (typeof v === "string" && v.trim()) this.copy[k] = v;
+        });
+      }
+      if (cfg.fields) {
+        if (typeof cfg.fields.showEmail === "boolean")
+          this.fields.showEmail = cfg.fields.showEmail;
+        if (typeof cfg.fields.requireEmail === "boolean")
+          this.fields.requireEmail = cfg.fields.requireEmail;
+        if (typeof cfg.fields.showScreenshot === "boolean")
+          this.fields.showScreenshot = cfg.fields.showScreenshot;
+      }
+      this.applyCopy();
+      this.applyFields();
 
       const trigger = this.shadow.querySelector(
         ".fiq-trigger"
@@ -352,6 +459,16 @@ function contrastOn(color: string): string {
       const content = textarea.value.trim();
       if (!content) return;
 
+      const emailVal = emailInput.value.trim();
+      if (
+        this.fields.showEmail &&
+        this.fields.requireEmail &&
+        !emailVal
+      ) {
+        emailInput.focus();
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.textContent = "Submitting...";
 
@@ -362,7 +479,7 @@ function contrastOn(color: string): string {
           body: JSON.stringify({
             site_key: siteKey,
             content,
-            email: emailInput.value.trim() || undefined,
+            email: emailVal || undefined,
             source_url: window.location.href,
             screenshot_url: this.attachedUrl || undefined,
             page_title: document.title || undefined,
@@ -373,7 +490,7 @@ function contrastOn(color: string): string {
         this.showSuccess();
       } catch {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Feedback";
+        submitBtn.textContent = this.text("submitText");
       }
     }
 
@@ -404,7 +521,7 @@ function contrastOn(color: string): string {
         textarea.value = "";
         emailInput.value = "";
         submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Feedback";
+        submitBtn.textContent = this.text("submitText");
         this.clearAttachment();
 
         const panel = this.shadow.querySelector(".fiq-panel") as HTMLElement;
