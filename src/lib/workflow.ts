@@ -76,9 +76,34 @@ jobs:
             fi
             if [ -n "$SCREENSHOT_URL" ]; then
               echo ""
-              echo "Screenshot attached by user (fetch with curl if you need to inspect it): $SCREENSHOT_URL"
+              echo "The user attached a screenshot showing the context of their feedback. It has been downloaded to /tmp/feedback-screenshot.png. Use the Read tool on that path to look at it — this often shows exactly which UI element they are talking about. Do this early, before deciding which files to edit."
             fi
           } > /tmp/prompt.md
+
+      - name: Download screenshot
+        if: inputs.screenshot_url != ''
+        env:
+          SCREENSHOT_URL: \${{ inputs.screenshot_url }}
+        run: |
+          set -uo pipefail
+          curl -sSL --max-time 30 --max-filesize 20000000 "$SCREENSHOT_URL" -o /tmp/feedback-screenshot.raw || {
+            echo "Screenshot download failed — continuing without it."
+            exit 0
+          }
+          if command -v file >/dev/null 2>&1; then
+            MIME=$(file --mime-type -b /tmp/feedback-screenshot.raw || echo "")
+            case "$MIME" in
+              image/png|image/jpeg|image/webp|image/gif)
+                mv /tmp/feedback-screenshot.raw /tmp/feedback-screenshot.png
+                ;;
+              *)
+                echo "Downloaded file is not a supported image ($MIME) — discarding."
+                rm -f /tmp/feedback-screenshot.raw
+                ;;
+            esac
+          else
+            mv /tmp/feedback-screenshot.raw /tmp/feedback-screenshot.png
+          fi
 
       - name: Run Claude Code
         id: claude

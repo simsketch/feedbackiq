@@ -8,6 +8,7 @@ import ProjectSettings from "@/components/project-settings";
 import ThemeSettings from "@/components/theme-settings";
 import RoadmapSettings from "@/components/roadmap-settings";
 import ChangelogSettings from "@/components/changelog-settings";
+import WidgetAppearanceSettings from "@/components/widget-appearance-settings";
 
 export default async function ProjectDetailPage({
   params,
@@ -79,6 +80,12 @@ export default async function ProjectDetailPage({
 
       <div className="space-y-8">
         <WidgetSnippet siteKey={project.siteKey} isGithubConnected={!!company?.githubInstallationId} />
+        <WidgetAppearanceSettings
+          projectId={project.id}
+          initialPosition={project.widgetPosition}
+          initialLabel={project.widgetLabel}
+          initialSize={project.widgetSize}
+        />
         <ThemeSettings
           projectId={project.id}
           initialWebsiteUrl={project.websiteUrl}

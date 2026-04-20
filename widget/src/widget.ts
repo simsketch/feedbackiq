@@ -8,6 +8,29 @@ interface Theme {
   borderRadius: string | null;
 }
 
+type WidgetPosition =
+  | "bottom-right"
+  | "bottom-left"
+  | "top-right"
+  | "top-left"
+  | "right-middle"
+  | "left-middle";
+
+interface WidgetConfig {
+  position: WidgetPosition | null;
+  label: string | null;
+  size: "default" | "compact" | null;
+}
+
+const VALID_POSITIONS: WidgetPosition[] = [
+  "bottom-right",
+  "bottom-left",
+  "top-right",
+  "top-left",
+  "right-middle",
+  "left-middle",
+];
+
 const API_ORIGIN = "https://app.feedbackiq.app";
 
 function parseColor(value: string): { r: number; g: number; b: number } | null {
@@ -209,10 +232,42 @@ function contrastOn(color: string): string {
           { credentials: "omit" }
         );
         if (!res.ok) return;
-        const data = (await res.json()) as { theme?: Theme };
+        const data = (await res.json()) as {
+          theme?: Theme;
+          widget?: WidgetConfig;
+        };
         if (data.theme) this.applyTheme(data.theme);
+        if (data.widget) this.applyWidgetConfig(data.widget);
       } catch {
-        // widget keeps default theme
+        // widget keeps default appearance
+      }
+    }
+
+    private applyWidgetConfig(cfg: WidgetConfig): void {
+      const position: WidgetPosition =
+        cfg.position && VALID_POSITIONS.includes(cfg.position)
+          ? cfg.position
+          : "bottom-right";
+      this.host.setAttribute("data-fiq-position", position);
+
+      const size = cfg.size === "compact" ? "compact" : "default";
+      this.host.setAttribute("data-fiq-size", size);
+
+      if (cfg.label && cfg.label.trim()) {
+        const trigger = this.shadow.querySelector(
+          ".fiq-trigger"
+        ) as HTMLButtonElement | null;
+        if (trigger) {
+          const label = cfg.label.trim().slice(0, 24);
+          trigger.classList.add("fiq-trigger-labeled");
+          trigger.innerHTML =
+            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>` +
+            `<span class="fiq-trigger-label"></span>`;
+          const labelEl = trigger.querySelector(
+            ".fiq-trigger-label"
+          ) as HTMLElement;
+          labelEl.textContent = label;
+        }
       }
     }
 

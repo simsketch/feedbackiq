@@ -53,6 +53,32 @@ export async function PATCH(
   if (body.defaultBranch !== undefined) data.defaultBranch = body.defaultBranch;
   if (body.websiteUrl !== undefined) data.websiteUrl = body.websiteUrl || null;
 
+  const VALID_POSITIONS = [
+    "bottom-right",
+    "bottom-left",
+    "top-right",
+    "top-left",
+    "right-middle",
+    "left-middle",
+  ];
+  if (
+    body.widgetPosition !== undefined &&
+    VALID_POSITIONS.includes(body.widgetPosition)
+  ) {
+    data.widgetPosition = body.widgetPosition;
+  }
+  if (body.widgetLabel !== undefined) {
+    const trimmed =
+      typeof body.widgetLabel === "string"
+        ? body.widgetLabel.trim().slice(0, 24)
+        : "";
+    data.widgetLabel = trimmed || null;
+  }
+  if (body.widgetSize !== undefined) {
+    data.widgetSize =
+      body.widgetSize === "compact" ? "compact" : "default";
+  }
+
   if (body.publicRoadmap !== undefined) {
     data.publicRoadmap = !!body.publicRoadmap;
     if (body.publicRoadmap && !existing.publicSlug) {

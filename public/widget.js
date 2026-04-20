@@ -48,6 +48,78 @@
     fill: var(--fiq-primary-contrast);
   }
 
+  .fiq-trigger-labeled {
+    width: auto;
+    height: auto;
+    border-radius: 999px;
+    padding: 10px 16px;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--fiq-font);
+  }
+
+  .fiq-trigger-labeled svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fiq-trigger-label {
+    white-space: nowrap;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger {
+    width: 40px;
+    height: 40px;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger-labeled {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  :host([data-fiq-position="bottom-left"]) .fiq-trigger {
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="top-right"]) .fiq-trigger {
+    bottom: auto;
+    top: 20px;
+  }
+
+  :host([data-fiq-position="top-left"]) .fiq-trigger {
+    bottom: auto;
+    top: 20px;
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger {
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger:hover {
+    transform: translateY(50%) scale(1.05);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger {
+    bottom: 50%;
+    right: auto;
+    left: 20px;
+    transform: translateY(50%);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger:hover {
+    transform: translateY(50%) scale(1.05);
+  }
+
   .fiq-panel {
     position: fixed;
     bottom: 80px;
@@ -60,6 +132,38 @@
     z-index: 2147483647;
     overflow: hidden;
     animation: fiq-slide-up 0.25s ease-out;
+  }
+
+  :host([data-fiq-position="bottom-left"]) .fiq-panel {
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="top-right"]) .fiq-panel {
+    bottom: auto;
+    top: 80px;
+  }
+
+  :host([data-fiq-position="top-left"]) .fiq-panel {
+    bottom: auto;
+    top: 80px;
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-panel {
+    bottom: auto;
+    top: 50%;
+    right: 80px;
+    transform: translateY(-50%);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-panel {
+    bottom: auto;
+    top: 50%;
+    right: auto;
+    left: 80px;
+    transform: translateY(-50%);
   }
 
   @keyframes fiq-slide-up {
@@ -237,7 +341,7 @@
   .fiq-hidden {
     display: none;
   }
-`;var p="https://app.feedbackiq.app";function u(l){let a=l.trim(),d=a.match(/^#([0-9a-f]{3,8})$/i);if(d){let r=d[1],n=r.length===3?r.split("").map(e=>e+e).join(""):r.slice(0,6);return n.length!==6?null:{r:parseInt(n.slice(0,2),16),g:parseInt(n.slice(2,4),16),b:parseInt(n.slice(4,6),16)}}let c=a.match(/rgba?\(([^)]+)\)/i);if(c){let r=c[1].split(/[\s,/]+/).filter(Boolean).map(Number);if(r.length>=3&&r.slice(0,3).every(n=>!isNaN(n)))return{r:r[0],g:r[1],b:r[2]}}return null}function m(l){let a=u(l);return a&&(.299*a.r+.587*a.g+.114*a.b)/255>.55?"#111111":"#ffffff"}(function(){let a=document.currentScript?.getAttribute("data-site-key")||"",d=8*1024*1024,c=["image/png","image/jpeg","image/webp","image/gif"];class r{constructor(){this.panelOpen=!1;this.attachedUrl=null;this.attachedName=null;this.host=document.createElement("div"),this.host.id="feedbackiq-widget",this.shadow=this.host.attachShadow({mode:"open"}),this.render(),document.body.appendChild(this.host),this.loadTheme()}render(){let e=document.createElement("style");e.textContent=h,this.shadow.appendChild(e);let t=document.createElement("button");t.className="fiq-trigger",t.setAttribute("aria-label","Open feedback"),t.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>',t.addEventListener("click",()=>this.toggle()),this.shadow.appendChild(t);let i=document.createElement("div");i.className="fiq-panel fiq-hidden",i.innerHTML=`
+`;var m=["bottom-right","bottom-left","top-right","top-left","right-middle","left-middle"],p="https://app.feedbackiq.app";function u(f){let r=f.trim(),l=r.match(/^#([0-9a-f]{3,8})$/i);if(l){let o=l[1],n=o.length===3?o.split("").map(t=>t+t).join(""):o.slice(0,6);return n.length!==6?null:{r:parseInt(n.slice(0,2),16),g:parseInt(n.slice(2,4),16),b:parseInt(n.slice(4,6),16)}}let c=r.match(/rgba?\(([^)]+)\)/i);if(c){let o=c[1].split(/[\s,/]+/).filter(Boolean).map(Number);if(o.length>=3&&o.slice(0,3).every(n=>!isNaN(n)))return{r:o[0],g:o[1],b:o[2]}}return null}function g(f){let r=u(f);return r&&(.299*r.r+.587*r.g+.114*r.b)/255>.55?"#111111":"#ffffff"}(function(){let r=document.currentScript?.getAttribute("data-site-key")||"",l=8*1024*1024,c=["image/png","image/jpeg","image/webp","image/gif"];class o{constructor(){this.panelOpen=!1;this.attachedUrl=null;this.attachedName=null;this.host=document.createElement("div"),this.host.id="feedbackiq-widget",this.shadow=this.host.attachShadow({mode:"open"}),this.render(),document.body.appendChild(this.host),this.loadTheme()}render(){let t=document.createElement("style");t.textContent=h,this.shadow.appendChild(t);let e=document.createElement("button");e.className="fiq-trigger",e.setAttribute("aria-label","Open feedback"),e.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>',e.addEventListener("click",()=>this.toggle()),this.shadow.appendChild(e);let i=document.createElement("div");i.className="fiq-panel fiq-hidden",i.innerHTML=`
         <div class="fiq-form-view">
           <div class="fiq-header">
             <h3>Share your feedback</h3>
@@ -261,4 +365,4 @@
         <div class="fiq-success fiq-hidden">
           <p>Thank you! Your feedback has been submitted.</p>
         </div>
-      `,this.shadow.appendChild(i),i.querySelector(".fiq-submit").addEventListener("click",()=>this.submit());let s=i.querySelector(".fiq-attach"),f=i.querySelector(".fiq-file");s.addEventListener("click",()=>f.click()),f.addEventListener("change",()=>this.handleFile(f)),i.querySelector(".fiq-attached-remove").addEventListener("click",()=>this.clearAttachment())}async handleFile(e){let t=e.files?.[0];if(e.value="",!t)return;if(!c.includes(t.type)){alert("Please attach a PNG, JPEG, WEBP, or GIF image.");return}if(t.size>d){alert("Image is too large (max 8MB).");return}let i=this.shadow.querySelector(".fiq-attach");i.textContent="Uploading...",i.disabled=!0;try{let o=await fetch(`${p}/api/v1/attachments`,{method:"POST",headers:{"Content-Type":t.type,"X-Site-Key":a},body:t});if(!o.ok)throw new Error("upload failed");let s=await o.json();this.attachedUrl=s.url,this.attachedName=t.name,this.renderAttachment()}catch{alert("Upload failed. Try again.")}finally{i.disabled=!1,i.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot'}}renderAttachment(){let e=this.shadow.querySelector(".fiq-attach"),t=this.shadow.querySelector(".fiq-attached"),i=this.shadow.querySelector(".fiq-attached-name");this.attachedUrl&&this.attachedName?(e.classList.add("fiq-hidden"),t.classList.remove("fiq-hidden"),i.textContent=this.attachedName):(e.classList.remove("fiq-hidden"),t.classList.add("fiq-hidden"),i.textContent="")}clearAttachment(){this.attachedUrl=null,this.attachedName=null,this.renderAttachment()}async loadTheme(){if(a)try{let e=await fetch(`${p}/api/v1/config?site_key=${encodeURIComponent(a)}`,{credentials:"omit"});if(!e.ok)return;let t=await e.json();t.theme&&this.applyTheme(t.theme)}catch{}}applyTheme(e){let t=this.host;e.primary&&(t.style.setProperty("--fiq-primary",e.primary),t.style.setProperty("--fiq-primary-contrast",m(e.primary))),e.background&&t.style.setProperty("--fiq-background",e.background),e.foreground&&t.style.setProperty("--fiq-foreground",e.foreground),e.fontFamily&&t.style.setProperty("--fiq-font",e.fontFamily),e.borderRadius&&t.style.setProperty("--fiq-radius",e.borderRadius)}toggle(){let e=this.shadow.querySelector(".fiq-panel");this.panelOpen=!this.panelOpen,this.panelOpen?e.classList.remove("fiq-hidden"):e.classList.add("fiq-hidden")}async submit(){let e=this.shadow.querySelector(".fiq-textarea"),t=this.shadow.querySelector(".fiq-email"),i=this.shadow.querySelector(".fiq-submit"),o=e.value.trim();if(o){i.disabled=!0,i.textContent="Submitting...";try{await fetch(`${p}/api/v1/feedback`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({site_key:a,content:o,email:t.value.trim()||void 0,source_url:window.location.href,screenshot_url:this.attachedUrl||void 0,page_title:document.title||void 0,user_agent:navigator.userAgent||void 0})}),this.showSuccess()}catch{i.disabled=!1,i.textContent="Submit Feedback"}}}showSuccess(){let e=this.shadow.querySelector(".fiq-form-view"),t=this.shadow.querySelector(".fiq-success");e.classList.add("fiq-hidden"),t.classList.remove("fiq-hidden"),setTimeout(()=>{t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden");let i=this.shadow.querySelector(".fiq-textarea"),o=this.shadow.querySelector(".fiq-email"),s=this.shadow.querySelector(".fiq-submit");i.value="",o.value="",s.disabled=!1,s.textContent="Submit Feedback",this.clearAttachment(),this.shadow.querySelector(".fiq-panel").classList.add("fiq-hidden"),this.panelOpen=!1},3e3)}}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{new r}):new r})();})();
+      `,this.shadow.appendChild(i),i.querySelector(".fiq-submit").addEventListener("click",()=>this.submit());let s=i.querySelector(".fiq-attach"),d=i.querySelector(".fiq-file");s.addEventListener("click",()=>d.click()),d.addEventListener("change",()=>this.handleFile(d)),i.querySelector(".fiq-attached-remove").addEventListener("click",()=>this.clearAttachment())}async handleFile(t){let e=t.files?.[0];if(t.value="",!e)return;if(!c.includes(e.type)){alert("Please attach a PNG, JPEG, WEBP, or GIF image.");return}if(e.size>l){alert("Image is too large (max 8MB).");return}let i=this.shadow.querySelector(".fiq-attach");i.textContent="Uploading...",i.disabled=!0;try{let a=await fetch(`${p}/api/v1/attachments`,{method:"POST",headers:{"Content-Type":e.type,"X-Site-Key":r},body:e});if(!a.ok)throw new Error("upload failed");let s=await a.json();this.attachedUrl=s.url,this.attachedName=e.name,this.renderAttachment()}catch{alert("Upload failed. Try again.")}finally{i.disabled=!1,i.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot'}}renderAttachment(){let t=this.shadow.querySelector(".fiq-attach"),e=this.shadow.querySelector(".fiq-attached"),i=this.shadow.querySelector(".fiq-attached-name");this.attachedUrl&&this.attachedName?(t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),i.textContent=this.attachedName):(t.classList.remove("fiq-hidden"),e.classList.add("fiq-hidden"),i.textContent="")}clearAttachment(){this.attachedUrl=null,this.attachedName=null,this.renderAttachment()}async loadTheme(){if(r)try{let t=await fetch(`${p}/api/v1/config?site_key=${encodeURIComponent(r)}`,{credentials:"omit"});if(!t.ok)return;let e=await t.json();e.theme&&this.applyTheme(e.theme),e.widget&&this.applyWidgetConfig(e.widget)}catch{}}applyWidgetConfig(t){let e=t.position&&m.includes(t.position)?t.position:"bottom-right";this.host.setAttribute("data-fiq-position",e);let i=t.size==="compact"?"compact":"default";if(this.host.setAttribute("data-fiq-size",i),t.label&&t.label.trim()){let a=this.shadow.querySelector(".fiq-trigger");if(a){let s=t.label.trim().slice(0,24);a.classList.add("fiq-trigger-labeled"),a.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg><span class="fiq-trigger-label"></span>';let d=a.querySelector(".fiq-trigger-label");d.textContent=s}}}applyTheme(t){let e=this.host;t.primary&&(e.style.setProperty("--fiq-primary",t.primary),e.style.setProperty("--fiq-primary-contrast",g(t.primary))),t.background&&e.style.setProperty("--fiq-background",t.background),t.foreground&&e.style.setProperty("--fiq-foreground",t.foreground),t.fontFamily&&e.style.setProperty("--fiq-font",t.fontFamily),t.borderRadius&&e.style.setProperty("--fiq-radius",t.borderRadius)}toggle(){let t=this.shadow.querySelector(".fiq-panel");this.panelOpen=!this.panelOpen,this.panelOpen?t.classList.remove("fiq-hidden"):t.classList.add("fiq-hidden")}async submit(){let t=this.shadow.querySelector(".fiq-textarea"),e=this.shadow.querySelector(".fiq-email"),i=this.shadow.querySelector(".fiq-submit"),a=t.value.trim();if(a){i.disabled=!0,i.textContent="Submitting...";try{await fetch(`${p}/api/v1/feedback`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({site_key:r,content:a,email:e.value.trim()||void 0,source_url:window.location.href,screenshot_url:this.attachedUrl||void 0,page_title:document.title||void 0,user_agent:navigator.userAgent||void 0})}),this.showSuccess()}catch{i.disabled=!1,i.textContent="Submit Feedback"}}}showSuccess(){let t=this.shadow.querySelector(".fiq-form-view"),e=this.shadow.querySelector(".fiq-success");t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),setTimeout(()=>{e.classList.add("fiq-hidden"),t.classList.remove("fiq-hidden");let i=this.shadow.querySelector(".fiq-textarea"),a=this.shadow.querySelector(".fiq-email"),s=this.shadow.querySelector(".fiq-submit");i.value="",a.value="",s.disabled=!1,s.textContent="Submit Feedback",this.clearAttachment(),this.shadow.querySelector(".fiq-panel").classList.add("fiq-hidden"),this.panelOpen=!1},3e3)}}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{new o}):new o})();})();

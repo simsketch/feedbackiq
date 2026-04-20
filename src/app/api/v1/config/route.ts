@@ -38,6 +38,9 @@ export async function GET(request: Request) {
       themeForeground: true,
       themeFontFamily: true,
       themeBorderRadius: true,
+      widgetPosition: true,
+      widgetLabel: true,
+      widgetSize: true,
     },
   });
 
@@ -56,6 +59,11 @@ export async function GET(request: Request) {
         foreground: project.themeForeground,
         fontFamily: project.themeFontFamily,
         borderRadius: project.themeBorderRadius,
+      },
+      widget: {
+        position: project.widgetPosition,
+        label: project.widgetLabel,
+        size: project.widgetSize,
       },
     },
     { headers }

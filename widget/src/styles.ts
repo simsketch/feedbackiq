@@ -48,6 +48,78 @@ export const STYLES = `
     fill: var(--fiq-primary-contrast);
   }
 
+  .fiq-trigger-labeled {
+    width: auto;
+    height: auto;
+    border-radius: 999px;
+    padding: 10px 16px;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--fiq-font);
+  }
+
+  .fiq-trigger-labeled svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fiq-trigger-label {
+    white-space: nowrap;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger {
+    width: 40px;
+    height: 40px;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  :host([data-fiq-size="compact"]) .fiq-trigger-labeled {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  :host([data-fiq-position="bottom-left"]) .fiq-trigger {
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="top-right"]) .fiq-trigger {
+    bottom: auto;
+    top: 20px;
+  }
+
+  :host([data-fiq-position="top-left"]) .fiq-trigger {
+    bottom: auto;
+    top: 20px;
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger {
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger:hover {
+    transform: translateY(50%) scale(1.05);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger {
+    bottom: 50%;
+    right: auto;
+    left: 20px;
+    transform: translateY(50%);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger:hover {
+    transform: translateY(50%) scale(1.05);
+  }
+
   .fiq-panel {
     position: fixed;
     bottom: 80px;
@@ -60,6 +132,38 @@ export const STYLES = `
     z-index: 2147483647;
     overflow: hidden;
     animation: fiq-slide-up 0.25s ease-out;
+  }
+
+  :host([data-fiq-position="bottom-left"]) .fiq-panel {
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="top-right"]) .fiq-panel {
+    bottom: auto;
+    top: 80px;
+  }
+
+  :host([data-fiq-position="top-left"]) .fiq-panel {
+    bottom: auto;
+    top: 80px;
+    right: auto;
+    left: 20px;
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-panel {
+    bottom: auto;
+    top: 50%;
+    right: 80px;
+    transform: translateY(-50%);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-panel {
+    bottom: auto;
+    top: 50%;
+    right: auto;
+    left: 80px;
+    transform: translateY(-50%);
   }
 
   @keyframes fiq-slide-up {
