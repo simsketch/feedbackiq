@@ -36,8 +36,8 @@ export async function findSimilarFeedback(
     JOIN feedbackiq."Feedback" other
       ON other."projectId" = self."projectId"
      AND other.id <> self.id
-    WHERE self.id = ${feedbackId}::uuid
-      AND self."projectId" = ${projectId}::uuid
+    WHERE self.id = ${feedbackId}
+      AND self."projectId" = ${projectId}
       AND similarity(other.content, self.content) >= ${threshold}
     ORDER BY similarity DESC
     LIMIT ${limit}
