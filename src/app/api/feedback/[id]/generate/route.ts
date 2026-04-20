@@ -111,6 +111,7 @@ export async function POST(
       project.defaultBranch,
       callbackUrl,
       installationToken,
+      feedback.screenshotUrl,
       justCreated
     );
 

@@ -81,6 +81,24 @@ export default async function FeedbackDetailPage({
           </p>
         </div>
 
+        {feedback.screenshotUrl && (
+          <div className="mb-6">
+            <a
+              href={feedback.screenshotUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 transition-colors hover:border-zinc-700"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={feedback.screenshotUrl}
+                alt="User screenshot"
+                className="max-h-96 w-full object-contain"
+              />
+            </a>
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500 mb-6 pb-6 border-b border-zinc-800">
           <span>
             Submitted {new Date(feedback.createdAt).toLocaleString()}

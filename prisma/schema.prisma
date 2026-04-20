@@ -107,6 +107,9 @@ model Feedback {
   tags           String[]          @default([])
   priority       FeedbackPriority?
   category       String?
+  screenshotUrl  String?
+  pageTitle      String?
+  userAgent      String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 

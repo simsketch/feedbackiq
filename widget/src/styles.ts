@@ -139,6 +139,67 @@ export const STYLES = `
     opacity: 0.7;
   }
 
+  .fiq-attach {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--fiq-muted);
+    background: transparent;
+    border: 1px dashed var(--fiq-border);
+    border-radius: var(--fiq-radius-sm);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .fiq-attach:hover {
+    border-color: var(--fiq-primary);
+    color: var(--fiq-foreground);
+  }
+
+  .fiq-attach svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .fiq-attached {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--fiq-foreground);
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--fiq-border);
+    border-radius: var(--fiq-radius-sm);
+  }
+
+  .fiq-attached-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fiq-attached-remove {
+    background: transparent;
+    border: none;
+    color: var(--fiq-muted);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 4px;
+  }
+
+  .fiq-attached-remove:hover {
+    color: var(--fiq-foreground);
+  }
+
   .fiq-submit {
     width: 100%;
     background: var(--fiq-primary);

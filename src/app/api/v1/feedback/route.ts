@@ -17,7 +17,15 @@ export async function POST(request: Request) {
     "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  const { site_key, content, email, source_url } = await request.json();
+  const {
+    site_key,
+    content,
+    email,
+    source_url,
+    screenshot_url,
+    page_title,
+    user_agent,
+  } = await request.json();
 
   if (!site_key || !content) {
     return NextResponse.json(
@@ -45,12 +53,23 @@ export async function POST(request: Request) {
     );
   }
 
+  const screenshotUrl =
+    typeof screenshot_url === "string" &&
+    screenshot_url.startsWith("https://")
+      ? screenshot_url
+      : null;
+
   const feedback = await prisma.feedback.create({
     data: {
       projectId: project.id,
       content,
       submitterEmail: email || null,
       sourceUrl: source_url || null,
+      screenshotUrl,
+      pageTitle:
+        typeof page_title === "string" ? page_title.slice(0, 500) : null,
+      userAgent:
+        typeof user_agent === "string" ? user_agent.slice(0, 500) : null,
       status: project.autoGeneratePrs ? "generating" : "new",
     },
   });
@@ -101,7 +120,8 @@ export async function POST(request: Request) {
           source_url || null,
           project.defaultBranch,
           callbackUrl,
-          installationToken
+          installationToken,
+          screenshotUrl
         );
 
         await prisma.pullRequest.update({

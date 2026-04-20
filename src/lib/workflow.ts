@@ -16,6 +16,9 @@ on:
       source_url:
         required: false
         default: ''
+      screenshot_url:
+        required: false
+        default: ''
       default_branch:
         required: true
       callback_url:
@@ -42,6 +45,7 @@ jobs:
           FEEDBACK_ID: \${{ inputs.feedback_id }}
           FEEDBACK_CONTENT: \${{ inputs.feedback_content }}
           SOURCE_URL: \${{ inputs.source_url }}
+          SCREENSHOT_URL: \${{ inputs.screenshot_url }}
         run: |
           set -euo pipefail
           BRANCH="feedbackiq/feedback-\${FEEDBACK_ID:0:8}"
@@ -69,6 +73,10 @@ jobs:
             if [ -n "$SOURCE_URL" ]; then
               echo ""
               echo "Source URL: $SOURCE_URL"
+            fi
+            if [ -n "$SCREENSHOT_URL" ]; then
+              echo ""
+              echo "Screenshot attached by user (fetch with curl if you need to inspect it): $SCREENSHOT_URL"
             fi
           } > /tmp/prompt.md
 
@@ -138,6 +146,7 @@ jobs:
           GH_TOKEN: \${{ inputs.installation_token }}
           FEEDBACK_CONTENT: \${{ inputs.feedback_content }}
           SOURCE_URL: \${{ inputs.source_url }}
+          SCREENSHOT_URL: \${{ inputs.screenshot_url }}
           DEFAULT_BRANCH: \${{ inputs.default_branch }}
           BRANCH: \${{ steps.prep.outputs.branch }}
         run: |
@@ -167,6 +176,12 @@ jobs:
             if [ -n "$SOURCE_URL" ]; then
               echo ""
               echo "**Source:** $SOURCE_URL"
+            fi
+            if [ -n "$SCREENSHOT_URL" ]; then
+              echo ""
+              echo "**Screenshot:**"
+              echo ""
+              echo "![screenshot]($SCREENSHOT_URL)"
             fi
             echo ""
             echo "## Changes"
@@ -331,6 +346,7 @@ export async function triggerWorkflow(
   defaultBranch: string,
   callbackUrl: string,
   installationToken: string,
+  screenshotUrl: string | null = null,
   justCreated: boolean = false
 ): Promise<WorkflowDispatchResult> {
   const callbackSecret = process.env.GITHUB_APP_WEBHOOK_SECRET;
@@ -358,6 +374,7 @@ export async function triggerWorkflow(
             feedback_id: feedbackId,
             feedback_content: feedbackContent,
             source_url: sourceUrl || "",
+            screenshot_url: screenshotUrl || "",
             default_branch: defaultBranch,
             callback_url: callbackUrl,
             callback_secret: callbackSecret,

@@ -51,10 +51,20 @@ function contrastOn(color: string): string {
   const scriptTag = document.currentScript as HTMLScriptElement | null;
   const siteKey = scriptTag?.getAttribute("data-site-key") || "";
 
+  const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+  const ACCEPTED_IMAGE_TYPES = [
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+  ];
+
   class FeedbackIQWidget {
     private host: HTMLElement;
     private shadow: ShadowRoot;
     private panelOpen = false;
+    private attachedUrl: string | null = null;
+    private attachedName: string | null = null;
 
     constructor() {
       this.host = document.createElement("div");
@@ -89,6 +99,15 @@ function contrastOn(color: string): string {
           <div class="fiq-body">
             <textarea class="fiq-textarea" placeholder="What's on your mind?"></textarea>
             <input type="email" class="fiq-email" placeholder="Email (optional)" />
+            <button type="button" class="fiq-attach">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+              Attach screenshot
+            </button>
+            <div class="fiq-attached fiq-hidden">
+              <span class="fiq-attached-name"></span>
+              <button type="button" class="fiq-attached-remove" aria-label="Remove">&times;</button>
+            </div>
+            <input type="file" class="fiq-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" />
             <button class="fiq-submit">Submit Feedback</button>
           </div>
         </div>
@@ -100,6 +119,86 @@ function contrastOn(color: string): string {
 
       const submitBtn = panel.querySelector(".fiq-submit") as HTMLButtonElement;
       submitBtn.addEventListener("click", () => this.submit());
+
+      const attachBtn = panel.querySelector(".fiq-attach") as HTMLButtonElement;
+      const fileInput = panel.querySelector(".fiq-file") as HTMLInputElement;
+      attachBtn.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", () => this.handleFile(fileInput));
+
+      const removeBtn = panel.querySelector(
+        ".fiq-attached-remove"
+      ) as HTMLButtonElement;
+      removeBtn.addEventListener("click", () => this.clearAttachment());
+    }
+
+    private async handleFile(input: HTMLInputElement): Promise<void> {
+      const file = input.files?.[0];
+      input.value = "";
+      if (!file) return;
+
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        alert("Please attach a PNG, JPEG, WEBP, or GIF image.");
+        return;
+      }
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        alert("Image is too large (max 8MB).");
+        return;
+      }
+
+      const attachBtn = this.shadow.querySelector(
+        ".fiq-attach"
+      ) as HTMLButtonElement;
+      attachBtn.textContent = "Uploading...";
+      attachBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_ORIGIN}/api/v1/attachments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": file.type,
+            "X-Site-Key": siteKey,
+          },
+          body: file,
+        });
+        if (!res.ok) throw new Error("upload failed");
+        const data = (await res.json()) as { url: string };
+        this.attachedUrl = data.url;
+        this.attachedName = file.name;
+        this.renderAttachment();
+      } catch {
+        alert("Upload failed. Try again.");
+      } finally {
+        attachBtn.disabled = false;
+        attachBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot`;
+      }
+    }
+
+    private renderAttachment(): void {
+      const attachBtn = this.shadow.querySelector(
+        ".fiq-attach"
+      ) as HTMLButtonElement;
+      const attached = this.shadow.querySelector(
+        ".fiq-attached"
+      ) as HTMLElement;
+      const nameEl = this.shadow.querySelector(
+        ".fiq-attached-name"
+      ) as HTMLElement;
+
+      if (this.attachedUrl && this.attachedName) {
+        attachBtn.classList.add("fiq-hidden");
+        attached.classList.remove("fiq-hidden");
+        nameEl.textContent = this.attachedName;
+      } else {
+        attachBtn.classList.remove("fiq-hidden");
+        attached.classList.add("fiq-hidden");
+        nameEl.textContent = "";
+      }
+    }
+
+    private clearAttachment(): void {
+      this.attachedUrl = null;
+      this.attachedName = null;
+      this.renderAttachment();
     }
 
     private async loadTheme(): Promise<void> {
@@ -177,6 +276,9 @@ function contrastOn(color: string): string {
             content,
             email: emailInput.value.trim() || undefined,
             source_url: window.location.href,
+            screenshot_url: this.attachedUrl || undefined,
+            page_title: document.title || undefined,
+            user_agent: navigator.userAgent || undefined,
           }),
         });
 
@@ -215,6 +317,7 @@ function contrastOn(color: string): string {
         emailInput.value = "";
         submitBtn.disabled = false;
         submitBtn.textContent = "Submit Feedback";
+        this.clearAttachment();
 
         const panel = this.shadow.querySelector(".fiq-panel") as HTMLElement;
         panel.classList.add("fiq-hidden");
