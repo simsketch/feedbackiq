@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import FeedbackRuns from "@/components/feedback-runs";
 import FeedbackChips from "@/components/feedback-chips";
+import SimilarFeedback from "@/components/similar-feedback";
+import { findSimilarFeedback } from "@/lib/find-similar";
 
 export default async function FeedbackDetailPage({
   params,
@@ -28,6 +30,8 @@ export default async function FeedbackDetailPage({
   });
 
   if (!feedback) notFound();
+
+  const similar = await findSimilarFeedback(feedback.id, project.id);
 
   const runs = feedback.pullRequests.map((pr) => ({
     id: pr.id,
@@ -126,6 +130,8 @@ export default async function FeedbackDetailPage({
           initialStatus={feedback.status}
           initialRuns={runs}
         />
+
+        <SimilarFeedback projectId={project.id} items={similar} />
       </div>
     </div>
   );
