@@ -81,6 +81,7 @@ model Project {
   defaultBranch     String    @default("main")
   autoGeneratePrs   Boolean   @default(false)
   publicRoadmap     Boolean   @default(false)
+  publicChangelog   Boolean   @default(false)
   publicSlug        String?   @unique
   siteKey           String    @unique @default(uuid())
   websiteUrl        String?
@@ -93,9 +94,27 @@ model Project {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  company  Company    @relation(fields: [companyId], references: [id])
-  feedback Feedback[]
+  company   Company            @relation(fields: [companyId], references: [id])
+  feedback  Feedback[]
+  changelog ChangelogEntry[]
 
+  @@schema("feedbackiq")
+}
+
+model ChangelogEntry {
+  id          String   @id @default(uuid())
+  projectId   String
+  feedbackId  String?
+  pullRequestId String?
+  title       String
+  body        String
+  prUrl       String?
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, publishedAt])
   @@schema("feedbackiq")
 }
 

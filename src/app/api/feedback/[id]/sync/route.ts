@@ -3,6 +3,7 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getInstallationOctokit } from "@/lib/github";
 import { getWorkflowRunStatus } from "@/lib/workflow";
+import { maybeGenerateChangelogEntry } from "@/lib/changelog";
 
 const STALE_MINUTES = 20;
 
@@ -35,16 +36,48 @@ export async function GET(
   const pendingPrs = feedback.pullRequests.filter(
     (pr) => pr.status === "pending"
   );
+  const openPrs = feedback.pullRequests.filter((pr) => pr.status === "open");
 
   let flippedToTerminal = false;
+  const mergedPrIds: string[] = [];
 
-  if (pendingPrs.length > 0 && company.githubInstallationId) {
+  if (
+    (pendingPrs.length > 0 || openPrs.length > 0) &&
+    company.githubInstallationId
+  ) {
     const [owner, repo] = project.githubRepo.split("/");
     if (owner && repo) {
       try {
         const octokit = await getInstallationOctokit(
           company.githubInstallationId
         );
+
+        for (const pr of openPrs) {
+          if (!pr.githubPrNumber) continue;
+          try {
+            const { data: ghPr } = await octokit.request(
+              "GET /repos/{owner}/{repo}/pulls/{pull_number}",
+              { owner, repo, pull_number: pr.githubPrNumber }
+            );
+            const newStatus =
+              ghPr.state === "closed"
+                ? ghPr.merged_at
+                  ? "merged"
+                  : "closed"
+                : "open";
+            if (newStatus !== "open") {
+              await prisma.pullRequest.update({
+                where: { id: pr.id },
+                data: { status: newStatus },
+              });
+              if (newStatus === "merged") {
+                mergedPrIds.push(pr.id);
+              }
+            }
+          } catch (err) {
+            console.error("open pr poll failed", pr.id, err);
+          }
+        }
 
         for (const pr of pendingPrs) {
           if (!pr.workflowRunId) {
@@ -165,6 +198,14 @@ export async function GET(
       where: { id: feedback.id },
       data: { status: "closed" },
     });
+  }
+
+  for (const prId of mergedPrIds) {
+    try {
+      await maybeGenerateChangelogEntry(prId);
+    } catch (err) {
+      console.error("changelog generation failed", prId, err);
+    }
   }
 
   const fresh = await prisma.feedback.findUnique({

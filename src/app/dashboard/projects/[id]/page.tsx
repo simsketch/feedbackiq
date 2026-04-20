@@ -7,6 +7,7 @@ import WidgetSnippet from "@/components/widget-snippet";
 import ProjectSettings from "@/components/project-settings";
 import ThemeSettings from "@/components/theme-settings";
 import RoadmapSettings from "@/components/roadmap-settings";
+import ChangelogSettings from "@/components/changelog-settings";
 
 export default async function ProjectDetailPage({
   params,
@@ -93,6 +94,11 @@ export default async function ProjectDetailPage({
         <RoadmapSettings
           projectId={project.id}
           initialEnabled={project.publicRoadmap}
+          initialSlug={project.publicSlug}
+        />
+        <ChangelogSettings
+          projectId={project.id}
+          initialEnabled={project.publicChangelog}
           initialSlug={project.publicSlug}
         />
         <ProjectSettings

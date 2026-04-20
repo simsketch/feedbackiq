@@ -60,6 +60,13 @@ export async function PATCH(
     }
   }
 
+  if (body.publicChangelog !== undefined) {
+    data.publicChangelog = !!body.publicChangelog;
+    if (body.publicChangelog && !existing.publicSlug && !data.publicSlug) {
+      data.publicSlug = await generateProjectSlug(existing.name);
+    }
+  }
+
   const project = await prisma.project.update({
     where: { id },
     data,
