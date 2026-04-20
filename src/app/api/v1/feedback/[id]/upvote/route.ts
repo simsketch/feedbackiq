@@ -59,3 +59,48 @@ export async function POST(
 
   return NextResponse.json({ count: updated.upvoteCount });
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  const feedback = await prisma.feedback.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      isPublic: true,
+      project: { select: { publicRoadmap: true } },
+    },
+  });
+
+  if (!feedback || !feedback.isPublic || !feedback.project.publicRoadmap) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const hash = voterHash(request);
+
+  const deleted = await prisma.feedbackUpvote.deleteMany({
+    where: { feedbackId: id, voterHash: hash },
+  });
+
+  if (deleted.count === 0) {
+    const current = await prisma.feedback.findUnique({
+      where: { id },
+      select: { upvoteCount: true },
+    });
+    return NextResponse.json({
+      count: current?.upvoteCount ?? 0,
+      missing: true,
+    });
+  }
+
+  const updated = await prisma.feedback.update({
+    where: { id },
+    data: { upvoteCount: { decrement: 1 } },
+    select: { upvoteCount: true },
+  });
+
+  return NextResponse.json({ count: Math.max(0, updated.upvoteCount) });
+}
