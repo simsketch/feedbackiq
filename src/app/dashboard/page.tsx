@@ -46,14 +46,14 @@ export default async function DashboardPage() {
         where: { project: { companyId } },
         orderBy: { createdAt: "desc" },
         take: 10,
-        include: { project: { select: { name: true } } },
+        include: { project: { select: { id: true, name: true } } },
       }),
     ]);
 
   const stats = [
-    { label: "Projects", value: projectCount },
-    { label: "Feedback", value: feedbackCount },
-    { label: "PRs Generated", value: prCount },
+    { label: "Projects", value: projectCount, href: "/dashboard/projects" },
+    { label: "Feedback", value: feedbackCount, href: "/dashboard/projects" },
+    { label: "PRs Generated", value: prCount, href: "/dashboard/projects" },
   ];
 
   return (
@@ -70,15 +70,16 @@ export default async function DashboardPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-3 gap-4">
         {stats.map((stat) => (
-          <div
+          <Link
             key={stat.label}
-            className="glow-card rounded-xl bg-[#18181b] p-6"
+            href={stat.href}
+            className="glow-card rounded-xl bg-[#18181b] p-6 transition-colors hover:border-zinc-700"
           >
             <p className="text-sm font-medium text-zinc-400">{stat.label}</p>
             <p className="mt-2 text-3xl font-bold text-white">
               {stat.value}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -109,10 +110,11 @@ export default async function DashboardPage() {
                 No feedback received yet.
               </p>
             ) : (
-              recentFeedback.map((item: { id: string; content: string; status: string; createdAt: Date; project: { name: string } }) => (
-                <div
+              recentFeedback.map((item: { id: string; content: string; status: string; createdAt: Date; project: { id: string; name: string } }) => (
+                <Link
                   key={item.id}
-                  className="flex items-start justify-between px-6 py-4 gap-4"
+                  href={`/dashboard/projects/${item.project.id}/feedback/${item.id}`}
+                  className="flex items-start justify-between px-6 py-4 gap-4 hover:bg-zinc-800/40 transition-colors"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm text-zinc-100 truncate">
@@ -128,7 +130,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <StatusBadge status={item.status} />
-                </div>
+                </Link>
               ))
             )}
           </div>
