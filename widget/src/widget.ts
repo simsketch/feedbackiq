@@ -86,7 +86,7 @@ const ICON_SVGS: Record<WidgetIcon, string> = {
   sparkle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3l1.88 4.77L19 9.5l-4.5 3.75L16 19l-4-3-4 3 1.5-5.75L5 9.5l5.12-1.73z"/></svg>`,
 };
 
-const API_ORIGIN = "https://app.feedbackiq.app";
+const API_ORIGIN = "https://www.feedbackiq.app";
 
 function parseColor(value: string): { r: number; g: number; b: number } | null {
   const v = value.trim();

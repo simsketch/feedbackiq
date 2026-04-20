@@ -1,44 +1,17 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { auth } from "@clerk/nextjs/server";
 
-const APP_ORIGIN = "https://app.feedbackiq.app";
-const DASHBOARD_URL = `${APP_ORIGIN}/dashboard`;
+export async function NavAuthLinks() {
+  const { userId } = await auth();
 
-function useRemoteAuth() {
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${APP_ORIGIN}/api/me`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (cancelled) return;
-        setSignedIn(data?.signedIn === true);
-      })
-      .catch(() => {
-        if (!cancelled) setSignedIn(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return signedIn;
-}
-
-export function MarketingNav() {
-  const signedIn = useRemoteAuth();
-
-  if (signedIn) {
+  if (userId) {
     return (
-      <a
-        href={DASHBOARD_URL}
-        className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+      <Link
+        href="/dashboard"
+        className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-all hover:bg-zinc-200"
       >
         Dashboard
-      </a>
+      </Link>
     );
   }
 
@@ -46,15 +19,15 @@ export function MarketingNav() {
     <>
       <Link
         href="/login"
-        className="text-sm text-gray-600 hover:text-black"
+        className="text-sm text-zinc-400 transition-colors hover:text-white"
       >
         Log in
       </Link>
       <Link
         href="/signup"
-        className="text-sm bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+        className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-all hover:bg-zinc-200"
       >
-        Get Started
+        Get started
       </Link>
     </>
   );
@@ -62,30 +35,24 @@ export function MarketingNav() {
 
 interface CtaProps {
   signedOutLabel: string;
-  signedOutHref: string;
   signedInLabel: string;
   className: string;
+  children?: React.ReactNode;
 }
 
-export function MarketingCta({
+export async function AuthAwareCta({
   signedOutLabel,
-  signedOutHref,
   signedInLabel,
   className,
+  children,
 }: CtaProps) {
-  const signedIn = useRemoteAuth();
-
-  if (signedIn) {
-    return (
-      <a href={DASHBOARD_URL} className={className}>
-        {signedInLabel}
-      </a>
-    );
-  }
-
+  const { userId } = await auth();
+  const href = userId ? "/dashboard" : "/signup";
+  const label = userId ? signedInLabel : signedOutLabel;
   return (
-    <Link href={signedOutHref} className={className}>
-      {signedOutLabel}
+    <Link href={href} className={className}>
+      {label}
+      {children}
     </Link>
   );
 }
