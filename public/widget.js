@@ -1,4 +1,4 @@
-"use strict";(()=>{var h=`
+"use strict";(()=>{var g=`
   :host {
     --fiq-primary: #000000;
     --fiq-primary-contrast: #ffffff;
@@ -102,22 +102,50 @@
 
   :host([data-fiq-position="right-middle"]) .fiq-trigger {
     bottom: 50%;
+    right: 0;
     transform: translateY(50%);
+    border-radius: 14px 0 0 14px;
+    padding: 12px 14px 12px 16px;
+    width: auto;
+    height: auto;
+    box-shadow: -4px 0 14px rgba(0, 0, 0, 0.15);
   }
 
   :host([data-fiq-position="right-middle"]) .fiq-trigger:hover {
-    transform: translateY(50%) scale(1.05);
+    transform: translateY(50%) translateX(-2px);
+    box-shadow: -6px 0 18px rgba(0, 0, 0, 0.2);
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger-labeled {
+    border-radius: 14px 0 0 14px;
+    padding: 12px 14px 12px 16px;
   }
 
   :host([data-fiq-position="left-middle"]) .fiq-trigger {
     bottom: 50%;
     right: auto;
-    left: 20px;
+    left: 0;
     transform: translateY(50%);
+    border-radius: 0 14px 14px 0;
+    padding: 12px 16px 12px 14px;
+    width: auto;
+    height: auto;
+    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.15);
   }
 
   :host([data-fiq-position="left-middle"]) .fiq-trigger:hover {
-    transform: translateY(50%) scale(1.05);
+    transform: translateY(50%) translateX(2px);
+    box-shadow: 6px 0 18px rgba(0, 0, 0, 0.2);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger-labeled {
+    border-radius: 0 14px 14px 0;
+    padding: 12px 16px 12px 14px;
+  }
+
+  :host([data-fiq-position="right-middle"][data-fiq-size="compact"]) .fiq-trigger,
+  :host([data-fiq-position="left-middle"][data-fiq-size="compact"]) .fiq-trigger {
+    padding: 10px 12px;
   }
 
   .fiq-panel {
@@ -154,7 +182,7 @@
   :host([data-fiq-position="right-middle"]) .fiq-panel {
     bottom: auto;
     top: 50%;
-    right: 80px;
+    right: 20px;
     transform: translateY(-50%);
   }
 
@@ -162,7 +190,7 @@
     bottom: auto;
     top: 50%;
     right: auto;
-    left: 80px;
+    left: 20px;
     transform: translateY(-50%);
   }
 
@@ -341,7 +369,7 @@
   .fiq-hidden {
     display: none;
   }
-`;var m=["bottom-right","bottom-left","top-right","top-left","right-middle","left-middle"],p="https://app.feedbackiq.app";function u(f){let r=f.trim(),l=r.match(/^#([0-9a-f]{3,8})$/i);if(l){let o=l[1],n=o.length===3?o.split("").map(t=>t+t).join(""):o.slice(0,6);return n.length!==6?null:{r:parseInt(n.slice(0,2),16),g:parseInt(n.slice(2,4),16),b:parseInt(n.slice(4,6),16)}}let c=r.match(/rgba?\(([^)]+)\)/i);if(c){let o=c[1].split(/[\s,/]+/).filter(Boolean).map(Number);if(o.length>=3&&o.slice(0,3).every(n=>!isNaN(n)))return{r:o[0],g:o[1],b:o[2]}}return null}function g(f){let r=u(f);return r&&(.299*r.r+.587*r.g+.114*r.b)/255>.55?"#111111":"#ffffff"}(function(){let r=document.currentScript?.getAttribute("data-site-key")||"",l=8*1024*1024,c=["image/png","image/jpeg","image/webp","image/gif"];class o{constructor(){this.panelOpen=!1;this.attachedUrl=null;this.attachedName=null;this.host=document.createElement("div"),this.host.id="feedbackiq-widget",this.shadow=this.host.attachShadow({mode:"open"}),this.render(),document.body.appendChild(this.host),this.loadTheme()}render(){let t=document.createElement("style");t.textContent=h,this.shadow.appendChild(t);let e=document.createElement("button");e.className="fiq-trigger",e.setAttribute("aria-label","Open feedback"),e.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>',e.addEventListener("click",()=>this.toggle()),this.shadow.appendChild(e);let i=document.createElement("div");i.className="fiq-panel fiq-hidden",i.innerHTML=`
+`;var u=["bottom-right","bottom-left","top-right","top-left","right-middle","left-middle"],q=["chat","lightbulb","megaphone","heart","question","sparkle"],b={chat:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>',lightbulb:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>',megaphone:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg>',heart:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',question:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>',sparkle:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3l1.88 4.77L19 9.5l-4.5 3.75L16 19l-4-3-4 3 1.5-5.75L5 9.5l5.12-1.73z"/></svg>'},f="https://app.feedbackiq.app";function v(p){let a=p.trim(),l=a.match(/^#([0-9a-f]{3,8})$/i);if(l){let o=l[1],d=o.length===3?o.split("").map(t=>t+t).join(""):o.slice(0,6);return d.length!==6?null:{r:parseInt(d.slice(0,2),16),g:parseInt(d.slice(2,4),16),b:parseInt(d.slice(4,6),16)}}let c=a.match(/rgba?\(([^)]+)\)/i);if(c){let o=c[1].split(/[\s,/]+/).filter(Boolean).map(Number);if(o.length>=3&&o.slice(0,3).every(d=>!isNaN(d)))return{r:o[0],g:o[1],b:o[2]}}return null}function x(p){let a=v(p);return a&&(.299*a.r+.587*a.g+.114*a.b)/255>.55?"#111111":"#ffffff"}(function(){let a=document.currentScript?.getAttribute("data-site-key")||"",l=8*1024*1024,c=["image/png","image/jpeg","image/webp","image/gif"];class o{constructor(){this.panelOpen=!1;this.attachedUrl=null;this.attachedName=null;this.host=document.createElement("div"),this.host.id="feedbackiq-widget",this.shadow=this.host.attachShadow({mode:"open"}),this.render(),document.body.appendChild(this.host),this.loadTheme()}render(){let t=document.createElement("style");t.textContent=g,this.shadow.appendChild(t);let e=document.createElement("button");e.className="fiq-trigger",e.setAttribute("aria-label","Open feedback"),e.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>',e.addEventListener("click",()=>this.toggle()),this.shadow.appendChild(e);let i=document.createElement("div");i.className="fiq-panel fiq-hidden",i.innerHTML=`
         <div class="fiq-form-view">
           <div class="fiq-header">
             <h3>Share your feedback</h3>
@@ -365,4 +393,4 @@
         <div class="fiq-success fiq-hidden">
           <p>Thank you! Your feedback has been submitted.</p>
         </div>
-      `,this.shadow.appendChild(i),i.querySelector(".fiq-submit").addEventListener("click",()=>this.submit());let s=i.querySelector(".fiq-attach"),d=i.querySelector(".fiq-file");s.addEventListener("click",()=>d.click()),d.addEventListener("change",()=>this.handleFile(d)),i.querySelector(".fiq-attached-remove").addEventListener("click",()=>this.clearAttachment())}async handleFile(t){let e=t.files?.[0];if(t.value="",!e)return;if(!c.includes(e.type)){alert("Please attach a PNG, JPEG, WEBP, or GIF image.");return}if(e.size>l){alert("Image is too large (max 8MB).");return}let i=this.shadow.querySelector(".fiq-attach");i.textContent="Uploading...",i.disabled=!0;try{let a=await fetch(`${p}/api/v1/attachments`,{method:"POST",headers:{"Content-Type":e.type,"X-Site-Key":r},body:e});if(!a.ok)throw new Error("upload failed");let s=await a.json();this.attachedUrl=s.url,this.attachedName=e.name,this.renderAttachment()}catch{alert("Upload failed. Try again.")}finally{i.disabled=!1,i.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot'}}renderAttachment(){let t=this.shadow.querySelector(".fiq-attach"),e=this.shadow.querySelector(".fiq-attached"),i=this.shadow.querySelector(".fiq-attached-name");this.attachedUrl&&this.attachedName?(t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),i.textContent=this.attachedName):(t.classList.remove("fiq-hidden"),e.classList.add("fiq-hidden"),i.textContent="")}clearAttachment(){this.attachedUrl=null,this.attachedName=null,this.renderAttachment()}async loadTheme(){if(r)try{let t=await fetch(`${p}/api/v1/config?site_key=${encodeURIComponent(r)}`,{credentials:"omit"});if(!t.ok)return;let e=await t.json();e.theme&&this.applyTheme(e.theme),e.widget&&this.applyWidgetConfig(e.widget)}catch{}}applyWidgetConfig(t){let e=t.position&&m.includes(t.position)?t.position:"bottom-right";this.host.setAttribute("data-fiq-position",e);let i=t.size==="compact"?"compact":"default";if(this.host.setAttribute("data-fiq-size",i),t.label&&t.label.trim()){let a=this.shadow.querySelector(".fiq-trigger");if(a){let s=t.label.trim().slice(0,24);a.classList.add("fiq-trigger-labeled"),a.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.17L18.83 16H4V4h16v13.17zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg><span class="fiq-trigger-label"></span>';let d=a.querySelector(".fiq-trigger-label");d.textContent=s}}}applyTheme(t){let e=this.host;t.primary&&(e.style.setProperty("--fiq-primary",t.primary),e.style.setProperty("--fiq-primary-contrast",g(t.primary))),t.background&&e.style.setProperty("--fiq-background",t.background),t.foreground&&e.style.setProperty("--fiq-foreground",t.foreground),t.fontFamily&&e.style.setProperty("--fiq-font",t.fontFamily),t.borderRadius&&e.style.setProperty("--fiq-radius",t.borderRadius)}toggle(){let t=this.shadow.querySelector(".fiq-panel");this.panelOpen=!this.panelOpen,this.panelOpen?t.classList.remove("fiq-hidden"):t.classList.add("fiq-hidden")}async submit(){let t=this.shadow.querySelector(".fiq-textarea"),e=this.shadow.querySelector(".fiq-email"),i=this.shadow.querySelector(".fiq-submit"),a=t.value.trim();if(a){i.disabled=!0,i.textContent="Submitting...";try{await fetch(`${p}/api/v1/feedback`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({site_key:r,content:a,email:e.value.trim()||void 0,source_url:window.location.href,screenshot_url:this.attachedUrl||void 0,page_title:document.title||void 0,user_agent:navigator.userAgent||void 0})}),this.showSuccess()}catch{i.disabled=!1,i.textContent="Submit Feedback"}}}showSuccess(){let t=this.shadow.querySelector(".fiq-form-view"),e=this.shadow.querySelector(".fiq-success");t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),setTimeout(()=>{e.classList.add("fiq-hidden"),t.classList.remove("fiq-hidden");let i=this.shadow.querySelector(".fiq-textarea"),a=this.shadow.querySelector(".fiq-email"),s=this.shadow.querySelector(".fiq-submit");i.value="",a.value="",s.disabled=!1,s.textContent="Submit Feedback",this.clearAttachment(),this.shadow.querySelector(".fiq-panel").classList.add("fiq-hidden"),this.panelOpen=!1},3e3)}}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{new o}):new o})();})();
+      `,this.shadow.appendChild(i),i.querySelector(".fiq-submit").addEventListener("click",()=>this.submit());let n=i.querySelector(".fiq-attach"),s=i.querySelector(".fiq-file");n.addEventListener("click",()=>s.click()),s.addEventListener("change",()=>this.handleFile(s)),i.querySelector(".fiq-attached-remove").addEventListener("click",()=>this.clearAttachment())}async handleFile(t){let e=t.files?.[0];if(t.value="",!e)return;if(!c.includes(e.type)){alert("Please attach a PNG, JPEG, WEBP, or GIF image.");return}if(e.size>l){alert("Image is too large (max 8MB).");return}let i=this.shadow.querySelector(".fiq-attach");i.textContent="Uploading...",i.disabled=!0;try{let r=await fetch(`${f}/api/v1/attachments`,{method:"POST",headers:{"Content-Type":e.type,"X-Site-Key":a},body:e});if(!r.ok)throw new Error("upload failed");let n=await r.json();this.attachedUrl=n.url,this.attachedName=e.name,this.renderAttachment()}catch{alert("Upload failed. Try again.")}finally{i.disabled=!1,i.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Attach screenshot'}}renderAttachment(){let t=this.shadow.querySelector(".fiq-attach"),e=this.shadow.querySelector(".fiq-attached"),i=this.shadow.querySelector(".fiq-attached-name");this.attachedUrl&&this.attachedName?(t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),i.textContent=this.attachedName):(t.classList.remove("fiq-hidden"),e.classList.add("fiq-hidden"),i.textContent="")}clearAttachment(){this.attachedUrl=null,this.attachedName=null,this.renderAttachment()}async loadTheme(){if(a)try{let t=await fetch(`${f}/api/v1/config?site_key=${encodeURIComponent(a)}`,{credentials:"omit"});if(!t.ok)return;let e=await t.json();e.theme&&this.applyTheme(e.theme),e.widget&&this.applyWidgetConfig(e.widget)}catch{}}applyWidgetConfig(t){let e=t.position&&u.includes(t.position)?t.position:"bottom-right";this.host.setAttribute("data-fiq-position",e);let i=t.size==="compact"?"compact":"default";this.host.setAttribute("data-fiq-size",i);let r=t.icon&&q.includes(t.icon)?t.icon:"chat";this.host.setAttribute("data-fiq-icon",r);let n=b[r],s=this.shadow.querySelector(".fiq-trigger");if(s)if(t.label&&t.label.trim()){let h=t.label.trim().slice(0,24);s.classList.add("fiq-trigger-labeled"),s.innerHTML=`${n}<span class="fiq-trigger-label"></span>`;let m=s.querySelector(".fiq-trigger-label");m.textContent=h}else s.classList.remove("fiq-trigger-labeled"),s.innerHTML=n}applyTheme(t){let e=this.host;t.primary&&(e.style.setProperty("--fiq-primary",t.primary),e.style.setProperty("--fiq-primary-contrast",x(t.primary))),t.background&&e.style.setProperty("--fiq-background",t.background),t.foreground&&e.style.setProperty("--fiq-foreground",t.foreground),t.fontFamily&&e.style.setProperty("--fiq-font",t.fontFamily),t.borderRadius&&e.style.setProperty("--fiq-radius",t.borderRadius)}toggle(){let t=this.shadow.querySelector(".fiq-panel");this.panelOpen=!this.panelOpen,this.panelOpen?t.classList.remove("fiq-hidden"):t.classList.add("fiq-hidden")}async submit(){let t=this.shadow.querySelector(".fiq-textarea"),e=this.shadow.querySelector(".fiq-email"),i=this.shadow.querySelector(".fiq-submit"),r=t.value.trim();if(r){i.disabled=!0,i.textContent="Submitting...";try{await fetch(`${f}/api/v1/feedback`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({site_key:a,content:r,email:e.value.trim()||void 0,source_url:window.location.href,screenshot_url:this.attachedUrl||void 0,page_title:document.title||void 0,user_agent:navigator.userAgent||void 0})}),this.showSuccess()}catch{i.disabled=!1,i.textContent="Submit Feedback"}}}showSuccess(){let t=this.shadow.querySelector(".fiq-form-view"),e=this.shadow.querySelector(".fiq-success");t.classList.add("fiq-hidden"),e.classList.remove("fiq-hidden"),setTimeout(()=>{e.classList.add("fiq-hidden"),t.classList.remove("fiq-hidden");let i=this.shadow.querySelector(".fiq-textarea"),r=this.shadow.querySelector(".fiq-email"),n=this.shadow.querySelector(".fiq-submit");i.value="",r.value="",n.disabled=!1,n.textContent="Submit Feedback",this.clearAttachment(),this.shadow.querySelector(".fiq-panel").classList.add("fiq-hidden"),this.panelOpen=!1},3e3)}}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{new o}):new o})();})();

@@ -94,6 +94,7 @@ model Project {
   widgetPosition    String    @default("bottom-right")
   widgetLabel       String?
   widgetSize        String    @default("default")
+  widgetIcon        String    @default("chat")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 

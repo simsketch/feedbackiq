@@ -85,6 +85,7 @@ export default async function ProjectDetailPage({
           initialPosition={project.widgetPosition}
           initialLabel={project.widgetLabel}
           initialSize={project.widgetSize}
+          initialIcon={project.widgetIcon}
         />
         <ThemeSettings
           projectId={project.id}

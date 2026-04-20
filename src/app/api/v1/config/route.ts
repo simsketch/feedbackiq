@@ -41,6 +41,7 @@ export async function GET(request: Request) {
       widgetPosition: true,
       widgetLabel: true,
       widgetSize: true,
+      widgetIcon: true,
     },
   });
 
@@ -64,6 +65,7 @@ export async function GET(request: Request) {
         position: project.widgetPosition,
         label: project.widgetLabel,
         size: project.widgetSize,
+        icon: project.widgetIcon,
       },
     },
     { headers }

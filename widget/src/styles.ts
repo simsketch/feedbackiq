@@ -102,22 +102,50 @@ export const STYLES = `
 
   :host([data-fiq-position="right-middle"]) .fiq-trigger {
     bottom: 50%;
+    right: 0;
     transform: translateY(50%);
+    border-radius: 14px 0 0 14px;
+    padding: 12px 14px 12px 16px;
+    width: auto;
+    height: auto;
+    box-shadow: -4px 0 14px rgba(0, 0, 0, 0.15);
   }
 
   :host([data-fiq-position="right-middle"]) .fiq-trigger:hover {
-    transform: translateY(50%) scale(1.05);
+    transform: translateY(50%) translateX(-2px);
+    box-shadow: -6px 0 18px rgba(0, 0, 0, 0.2);
+  }
+
+  :host([data-fiq-position="right-middle"]) .fiq-trigger-labeled {
+    border-radius: 14px 0 0 14px;
+    padding: 12px 14px 12px 16px;
   }
 
   :host([data-fiq-position="left-middle"]) .fiq-trigger {
     bottom: 50%;
     right: auto;
-    left: 20px;
+    left: 0;
     transform: translateY(50%);
+    border-radius: 0 14px 14px 0;
+    padding: 12px 16px 12px 14px;
+    width: auto;
+    height: auto;
+    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.15);
   }
 
   :host([data-fiq-position="left-middle"]) .fiq-trigger:hover {
-    transform: translateY(50%) scale(1.05);
+    transform: translateY(50%) translateX(2px);
+    box-shadow: 6px 0 18px rgba(0, 0, 0, 0.2);
+  }
+
+  :host([data-fiq-position="left-middle"]) .fiq-trigger-labeled {
+    border-radius: 0 14px 14px 0;
+    padding: 12px 16px 12px 14px;
+  }
+
+  :host([data-fiq-position="right-middle"][data-fiq-size="compact"]) .fiq-trigger,
+  :host([data-fiq-position="left-middle"][data-fiq-size="compact"]) .fiq-trigger {
+    padding: 10px 12px;
   }
 
   .fiq-panel {
@@ -154,7 +182,7 @@ export const STYLES = `
   :host([data-fiq-position="right-middle"]) .fiq-panel {
     bottom: auto;
     top: 50%;
-    right: 80px;
+    right: 20px;
     transform: translateY(-50%);
   }
 
@@ -162,7 +190,7 @@ export const STYLES = `
     bottom: auto;
     top: 50%;
     right: auto;
-    left: 80px;
+    left: 20px;
     transform: translateY(-50%);
   }
 

@@ -79,6 +79,21 @@ export async function PATCH(
       body.widgetSize === "compact" ? "compact" : "default";
   }
 
+  const VALID_ICONS = [
+    "chat",
+    "lightbulb",
+    "megaphone",
+    "heart",
+    "question",
+    "sparkle",
+  ];
+  if (
+    body.widgetIcon !== undefined &&
+    VALID_ICONS.includes(body.widgetIcon)
+  ) {
+    data.widgetIcon = body.widgetIcon;
+  }
+
   if (body.publicRoadmap !== undefined) {
     data.publicRoadmap = !!body.publicRoadmap;
     if (body.publicRoadmap && !existing.publicSlug) {
