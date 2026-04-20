@@ -126,7 +126,11 @@ function contrastOn(color: string): string {
 }
 
 (function () {
-  const scriptTag = document.currentScript as HTMLScriptElement | null;
+  const scriptTag =
+    (document.currentScript as HTMLScriptElement | null) ??
+    (document.querySelector(
+      "script[data-site-key]"
+    ) as HTMLScriptElement | null);
   const siteKey = scriptTag?.getAttribute("data-site-key") || "";
 
   const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
