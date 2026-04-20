@@ -183,6 +183,7 @@ export const STYLES = `
     bottom: auto;
     top: 50%;
     right: 20px;
+    animation: fiq-slide-in-middle 0.25s ease-out;
     transform: translateY(-50%);
   }
 
@@ -191,6 +192,7 @@ export const STYLES = `
     top: 50%;
     right: auto;
     left: 20px;
+    animation: fiq-slide-in-middle 0.25s ease-out;
     transform: translateY(-50%);
   }
 
@@ -202,6 +204,17 @@ export const STYLES = `
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes fiq-slide-in-middle {
+    from {
+      opacity: 0;
+      transform: translateY(calc(-50% + 6px));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(-50%);
     }
   }
 
