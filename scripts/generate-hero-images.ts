@@ -23,6 +23,19 @@ const BRAND_STYLE = [
   "No logos, no watermarks, no words. Pure visual metaphor.",
 ].join(" ");
 
+const BLOG_PROMPT_OVERRIDES: Record<string, string> = {
+  "deduping-feedback-with-pgvector": [
+    "Highly detailed futuristic isometric 3D illustration, 30-degree isometric perspective, pixel-crisp edges, editorial tech magazine quality.",
+    "Scene: a dark floating platform in deep cyberspace. Dozens of translucent glass-like holographic bubbles float above it — each bubble clearly displays the glowing red text '500 ERROR' in bold futuristic typography, seen from the isometric angle. The bubbles are visibly duplicates of each other, arranged in a swirling cloud.",
+    "A single massive central glowing cyan orb (a 'vector embedding' sphere) pulses in the middle of the platform, magnetically attracting the bubbles. Bubbles near the orb dissolve into cyan particle streams and merge into one clean consolidated bubble that rises out the top, labeled with a single '500 ERROR' in calmer cyan.",
+    "Foreground detail: faint wireframe vectors connecting the bubbles, data-particle trails, subtle hexagonal lattice on the platform, a few holographic UI panes on the side showing abstract sine-wave similarity curves (no readable text except '500 ERROR').",
+    "Lighting: volumetric cyan and electric-blue rim lights, red emergency glow only on the incoming error bubbles, high contrast, cinematic bloom, subtle lens flare, soft ambient occlusion.",
+    "Palette: deep zinc-950 / near-black background (#09090b), cyan (#22d3ee), electric blue (#3b82f6), hazard red (#ef4444) only on the error bubbles.",
+    "Feels like: Apple keynote × Blade Runner 2049 × modern dev-tool marketing hero. Clean, confident, futuristic, highly visually appealing.",
+    "1200x630 composition, balanced negative space, no watermark, no logos, no additional text anywhere other than the '500 ERROR' strings on bubbles.",
+  ].join(" "),
+};
+
 interface ImageJob {
   slug: string;
   prompt: string;
@@ -51,12 +64,14 @@ function buildJobs(): ImageJob[] {
   }
 
   for (const p of posts) {
+    const override = BLOG_PROMPT_OVERRIDES[p.slug];
     jobs.push({
       slug: `blog-${p.slug}`,
       outFile: join(OUT_DIR, `blog-${p.slug}.png`),
       prompt:
+        override ??
         `Editorial tech illustration for a blog post titled "${p.title}". Concept: ${p.description} Render as abstract, symbolic, not literal. ` +
-        BRAND_STYLE,
+          BRAND_STYLE,
     });
   }
 
