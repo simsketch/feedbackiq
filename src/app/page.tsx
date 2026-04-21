@@ -1,13 +1,12 @@
 import { NavAuthLinks, AuthAwareCta } from "@/components/marketing-auth";
+import LogoMark from "@/components/logo-mark";
 
 function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-green-400">
-            <span className="text-sm font-bold text-black">F</span>
-          </div>
+          <LogoMark className="h-8 w-8" />
           <span className="text-lg font-bold tracking-tight">FeedbackIQ</span>
         </div>
         <div className="flex items-center gap-6">
@@ -459,9 +458,7 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-cyan-400 to-green-400">
-              <span className="text-[10px] font-bold text-black">F</span>
-            </div>
+            <LogoMark className="h-6 w-6" />
             <span className="text-sm font-semibold">FeedbackIQ</span>
           </div>
           <p className="text-sm text-zinc-500">

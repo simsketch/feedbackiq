@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import LogoMark from "@/components/logo-mark";
 
 const navItems = [
   { label: "Overview", href: "/dashboard" },
@@ -22,9 +23,7 @@ export default function DashboardNav() {
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-bold tracking-tight"
           >
-            <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-xs font-bold">
-              F
-            </span>
+            <LogoMark className="h-7 w-7" />
             <span className="text-white">FeedbackIQ</span>
           </Link>
           <ul className="flex items-center gap-1">
