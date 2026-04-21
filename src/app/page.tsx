@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NavAuthLinks, AuthAwareCta } from "@/components/marketing-auth";
 import LogoMark from "@/components/logo-mark";
 
@@ -16,6 +17,12 @@ function Nav() {
           <a href="#features" className="hidden text-sm text-zinc-400 transition-colors hover:text-white sm:block">
             Features
           </a>
+          <Link href="/vs" className="hidden text-sm text-zinc-400 transition-colors hover:text-white sm:block">
+            Compare
+          </Link>
+          <Link href="/blog" className="hidden text-sm text-zinc-400 transition-colors hover:text-white sm:block">
+            Blog
+          </Link>
           <NavAuthLinks />
         </div>
       </div>
@@ -330,59 +337,245 @@ function ScreenshotFeature() {
   );
 }
 
+function IllustrationAgent() {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse at 30% 20%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0) 60%)",
+        }}
+      />
+      <div className="absolute inset-4 rounded-md border border-zinc-800/70 bg-zinc-950/70 p-3 font-mono text-[10px] leading-[1.5] text-zinc-500 backdrop-blur-sm">
+        <div className="mb-1.5 flex items-center gap-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
+          <span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
+          <span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
+        </div>
+        <div>
+          <span className="text-cyan-400">const</span>{" "}
+          <span className="text-zinc-300">agent</span>{" "}
+          <span className="text-zinc-600">=</span> claude<span className="text-zinc-600">.</span>read(
+        </div>
+        <div className="pl-3">
+          <span className="text-green-400">&quot;src/checkout&quot;</span>
+        </div>
+        <div>)</div>
+        <div className="mt-1 flex items-center gap-1.5">
+          <span
+            className="inline-block h-2 w-2 rounded-full bg-cyan-400"
+            style={{ animation: "pulse-dot 1.6s ease infinite" }}
+          />
+          <span className="text-cyan-400">writing patch...</span>
+          <span className="inline-block h-3 w-1 translate-y-[1px] bg-cyan-400" style={{ animation: "pulse-dot 0.9s ease infinite" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IllustrationGitHub() {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          background:
+            "radial-gradient(ellipse at 70% 30%, rgba(74,222,128,0.15) 0%, rgba(74,222,128,0) 60%)",
+        }}
+      />
+      <div className="absolute inset-4 rounded-md border border-zinc-800/70 bg-zinc-950/70 p-3 backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <svg className="h-3.5 w-3.5 text-zinc-400" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span className="font-mono text-[10px] text-zinc-400">acme/app</span>
+          <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-green-500/10 px-1.5 py-0.5 text-[9px] font-medium text-green-400 ring-1 ring-green-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+            Installed
+          </span>
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {["contents: write", "pull-requests: write", "issues: read"].map((p) => (
+            <div key={p} className="flex items-center gap-2 font-mono text-[10px] text-zinc-500">
+              <svg className="h-3 w-3 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+              {p}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IllustrationApproval() {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, rgba(34,211,238,0.15) 0%, rgba(34,211,238,0) 70%)",
+        }}
+      />
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
+          <span>Review</span>
+          <span className="relative inline-flex h-5 w-9 items-center rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_12px_rgba(34,211,238,0.5)]">
+            <span className="absolute right-0.5 h-4 w-4 rounded-full bg-white shadow-md" />
+          </span>
+          <span className="text-cyan-400">Auto</span>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-md border border-cyan-400/30 bg-cyan-400/5 px-2 py-1 font-mono text-[10px] text-cyan-400">
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          auto-ship enabled
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IllustrationScreenshot() {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          background:
+            "radial-gradient(ellipse at 40% 60%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0) 60%)",
+        }}
+      />
+      <div className="absolute inset-4 rounded-md border border-zinc-800/70 bg-zinc-950/60 p-2 backdrop-blur-sm">
+        <div className="relative h-full w-full overflow-hidden rounded-sm bg-zinc-900/50">
+          <div className="absolute inset-2 space-y-1.5">
+            <div className="h-1.5 w-12 rounded bg-zinc-700" />
+            <div className="h-1.5 w-full rounded bg-zinc-800" />
+            <div className="h-1.5 w-3/4 rounded bg-zinc-800" />
+            <div className="mt-2 h-8 rounded bg-zinc-800/60" />
+          </div>
+          <div
+            className="absolute rounded-sm border-2 border-cyan-400 shadow-[0_0_0_3px_rgba(34,211,238,0.15)]"
+            style={{ top: "58%", left: "10%", width: "55%", height: "22%" }}
+          />
+          <div
+            className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2"
+            style={{ top: "69%", left: "67%" }}
+          >
+            <div className="h-full w-full rotate-45 rounded-sm border border-cyan-400 bg-cyan-400/40 shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IllustrationAnalytics() {
+  const bars = [28, 52, 38, 68, 48, 84, 64];
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 80%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0) 70%)",
+        }}
+      />
+      <div className="absolute inset-4 flex items-end justify-between gap-1.5">
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            className="relative flex-1 rounded-sm bg-gradient-to-t from-cyan-500/80 to-blue-500/80 shadow-[0_0_8px_rgba(34,211,238,0.3)]"
+            style={{
+              height: `${h}%`,
+              animation: `fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both ${i * 60}ms`,
+            }}
+          />
+        ))}
+      </div>
+      <div className="absolute top-3 left-4 font-mono text-[10px] text-zinc-500">
+        feedback / day
+      </div>
+      <div className="absolute top-3 right-4 font-mono text-[10px] text-green-400">
+        +24%
+      </div>
+    </div>
+  );
+}
+
+function IllustrationTeam() {
+  const avatars = [
+    { from: "from-cyan-400", to: "to-blue-500", initial: "E" },
+    { from: "from-green-400", to: "to-emerald-500", initial: "M" },
+    { from: "from-amber-400", to: "to-orange-500", initial: "J" },
+    { from: "from-fuchsia-400", to: "to-pink-500", initial: "S" },
+  ];
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0) 60%)",
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex -space-x-3">
+          {avatars.map((a) => (
+            <div
+              key={a.initial}
+              className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${a.from} ${a.to} ring-2 ring-[#18181b] font-semibold text-sm text-black`}
+            >
+              {a.initial}
+            </div>
+          ))}
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 ring-2 ring-[#18181b] font-mono text-xs text-zinc-400">
+            +3
+          </div>
+        </div>
+      </div>
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+        <span className="rounded-full bg-zinc-900/80 px-2 py-0.5 font-mono text-[10px] text-zinc-500 ring-1 ring-zinc-800">
+          7 members · 3 roles
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function Features() {
   const features = [
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-        </svg>
-      ),
+      visual: <IllustrationAgent />,
       title: "Claude Agent SDK",
       desc: "Powered by Claude's agent capabilities. Reads your codebase, understands patterns, writes clean code that fits your style.",
     },
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-        </svg>
-      ),
+      visual: <IllustrationGitHub />,
       title: "GitHub App integration",
       desc: "Install once, select repos. Fine-grained permissions. No token management. Works with private repositories.",
     },
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-        </svg>
-      ),
+      visual: <IllustrationApproval />,
       title: "Approval or auto-mode",
       desc: "Review feedback before generating PRs, or flip a switch and let the agent handle everything automatically.",
     },
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-        </svg>
-      ),
+      visual: <IllustrationScreenshot />,
       title: "Screenshot attachments",
       desc: "Users attach a screenshot alongside their feedback. Claude reads the image for visual context before writing code.",
     },
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-        </svg>
-      ),
+      visual: <IllustrationAnalytics />,
       title: "Dashboard analytics",
       desc: "Track feedback volume, PR generation, merge rates. See which pages generate the most feedback.",
     },
     {
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-        </svg>
-      ),
+      visual: <IllustrationTeam />,
       title: "Team management",
       desc: "Invite your team. Role-based access. Everyone stays in the loop on what users want and what's being built.",
     },
@@ -405,13 +598,15 @@ function Features() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="glow-card rounded-xl bg-[var(--bg-card)] p-6"
+              className="glow-card group rounded-xl bg-[var(--bg-card)] overflow-hidden"
             >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-cyan-400">
-                {feature.icon}
+              <div className="relative h-32 border-b border-zinc-800/50 bg-zinc-900/40 overflow-hidden">
+                {feature.visual}
               </div>
-              <h3 className="text-base font-semibold">{feature.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-400">{feature.desc}</p>
+              <div className="p-5">
+                <h3 className="text-base font-semibold">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{feature.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -461,9 +656,17 @@ function Footer() {
             <LogoMark className="h-6 w-6" />
             <span className="text-sm font-semibold">FeedbackIQ</span>
           </div>
-          <p className="text-sm text-zinc-500">
-            Feedback to code, automatically.
-          </p>
+          <div className="flex items-center gap-6 text-sm text-zinc-500">
+            <Link href="/vs" className="transition-colors hover:text-white">
+              Compare
+            </Link>
+            <Link href="/blog" className="transition-colors hover:text-white">
+              Blog
+            </Link>
+            <Link href="/changelog" className="transition-colors hover:text-white">
+              Changelog
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
