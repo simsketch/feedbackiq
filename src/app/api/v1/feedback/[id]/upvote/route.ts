@@ -22,6 +22,8 @@ export async function POST(
     select: {
       id: true,
       isPublic: true,
+      duplicateOfId: true,
+      duplicateConfirmed: true,
       project: { select: { publicRoadmap: true } },
     },
   });
@@ -30,17 +32,22 @@ export async function POST(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const targetId =
+    feedback.duplicateConfirmed && feedback.duplicateOfId
+      ? feedback.duplicateOfId
+      : feedback.id;
+
   const hash = voterHash(request);
 
   try {
     await prisma.feedbackUpvote.create({
-      data: { feedbackId: id, voterHash: hash },
+      data: { feedbackId: targetId, voterHash: hash },
     });
   } catch (err: unknown) {
     const code = (err as { code?: string }).code;
     if (code === "P2002") {
       const current = await prisma.feedback.findUnique({
-        where: { id },
+        where: { id: targetId },
         select: { upvoteCount: true },
       });
       return NextResponse.json({
@@ -52,7 +59,7 @@ export async function POST(
   }
 
   const updated = await prisma.feedback.update({
-    where: { id },
+    where: { id: targetId },
     data: { upvoteCount: { increment: 1 } },
     select: { upvoteCount: true },
   });
@@ -71,6 +78,8 @@ export async function DELETE(
     select: {
       id: true,
       isPublic: true,
+      duplicateOfId: true,
+      duplicateConfirmed: true,
       project: { select: { publicRoadmap: true } },
     },
   });
@@ -79,15 +88,20 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const targetId =
+    feedback.duplicateConfirmed && feedback.duplicateOfId
+      ? feedback.duplicateOfId
+      : feedback.id;
+
   const hash = voterHash(request);
 
   const deleted = await prisma.feedbackUpvote.deleteMany({
-    where: { feedbackId: id, voterHash: hash },
+    where: { feedbackId: targetId, voterHash: hash },
   });
 
   if (deleted.count === 0) {
     const current = await prisma.feedback.findUnique({
-      where: { id },
+      where: { id: targetId },
       select: { upvoteCount: true },
     });
     return NextResponse.json({
@@ -97,7 +111,7 @@ export async function DELETE(
   }
 
   const updated = await prisma.feedback.update({
-    where: { id },
+    where: { id: targetId },
     data: { upvoteCount: { decrement: 1 } },
     select: { upvoteCount: true },
   });

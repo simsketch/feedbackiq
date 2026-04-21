@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  schemas  = ["feedbackiq"]
+  provider   = "postgresql"
+  schemas    = ["feedbackiq"]
+  extensions = [vector]
 }
 
 enum UserRole {
@@ -144,28 +146,35 @@ model ChangelogEntry {
 }
 
 model Feedback {
-  id             String            @id @default(uuid())
-  projectId      String
-  content        String
-  submitterEmail String?
-  sourceUrl      String?
-  status         FeedbackStatus    @default(new)
-  tags           String[]          @default([])
-  priority       FeedbackPriority?
-  category       String?
-  screenshotUrl  String?
-  pageTitle      String?
-  userAgent      String?
-  isPublic       Boolean           @default(true)
-  upvoteCount    Int               @default(0)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id                  String            @id @default(uuid())
+  projectId           String
+  content             String
+  submitterEmail      String?
+  sourceUrl           String?
+  status              FeedbackStatus    @default(new)
+  tags                String[]          @default([])
+  priority            FeedbackPriority?
+  category            String?
+  screenshotUrl       String?
+  pageTitle           String?
+  userAgent           String?
+  isPublic            Boolean           @default(true)
+  upvoteCount         Int               @default(0)
+  embedding           Unsupported("vector(1536)")?
+  duplicateOfId       String?
+  duplicateSimilarity Float?
+  duplicateConfirmed  Boolean           @default(false)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 
   project      Project          @relation(fields: [projectId], references: [id])
   pullRequests PullRequest[]
   upvotes      FeedbackUpvote[]
+  duplicateOf  Feedback?        @relation("FeedbackDuplicates", fields: [duplicateOfId], references: [id], onDelete: SetNull)
+  duplicates   Feedback[]       @relation("FeedbackDuplicates")
 
   @@index([projectId, status])
+  @@index([duplicateOfId])
   @@schema("feedbackiq")
 }
 

@@ -7,6 +7,7 @@ import {
   triggerWorkflow,
 } from "@/lib/workflow";
 import { autoTagFeedback } from "@/lib/autotag";
+import { dedupeFeedback } from "@/lib/embeddings";
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin") || "*";
@@ -76,6 +77,10 @@ export async function POST(request: Request) {
 
   autoTagFeedback(feedback.id).catch((err) => {
     console.error("autoTagFeedback failed:", err);
+  });
+
+  dedupeFeedback(feedback.id).catch((err) => {
+    console.error("dedupeFeedback failed:", err);
   });
 
   if (project.autoGeneratePrs && project.company.githubInstallationId) {

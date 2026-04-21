@@ -4,6 +4,7 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import FeedbackChips from "@/components/feedback-chips";
+import DuplicateSuggestions from "@/components/duplicate-suggestions";
 
 const statusBadge: Record<string, string> = {
   new: "bg-cyan-500/10 text-cyan-400",
@@ -30,9 +31,39 @@ export default async function FeedbackListPage({
   if (!project) notFound();
 
   const feedback = await prisma.feedback.findMany({
-    where: { projectId: id },
+    where: { projectId: id, duplicateConfirmed: false },
     orderBy: { createdAt: "desc" },
   });
+
+  const suggestionsRaw = await prisma.feedback.findMany({
+    where: {
+      projectId: id,
+      duplicateOfId: { not: null },
+      duplicateConfirmed: false,
+    },
+    select: {
+      id: true,
+      content: true,
+      duplicateSimilarity: true,
+      duplicateOf: {
+        select: { id: true, content: true, upvoteCount: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const suggestions = suggestionsRaw.map((s) => ({
+    id: s.id,
+    content: s.content,
+    similarity: s.duplicateSimilarity ?? 0,
+    parent: s.duplicateOf
+      ? {
+          id: s.duplicateOf.id,
+          content: s.duplicateOf.content,
+          upvoteCount: s.duplicateOf.upvoteCount,
+        }
+      : null,
+  }));
 
   return (
     <div>
@@ -48,6 +79,8 @@ export default async function FeedbackListPage({
       <h1 className="text-3xl font-bold tracking-tight mb-6 animate-fade-up">
         <span className="gradient-text">Feedback</span>
       </h1>
+
+      <DuplicateSuggestions projectId={project.id} suggestions={suggestions} />
 
       {feedback.length === 0 ? (
         <div className="glow-card rounded-xl bg-[#18181b] border border-zinc-800 p-12 text-center">

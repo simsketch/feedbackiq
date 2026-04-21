@@ -36,7 +36,11 @@ export default async function PublicRoadmapPage({
   await syncOpenPRsForProject(project.id);
 
   const feedback = await prisma.feedback.findMany({
-    where: { projectId: project.id, isPublic: true },
+    where: {
+      projectId: project.id,
+      isPublic: true,
+      duplicateConfirmed: false,
+    },
     select: {
       id: true,
       content: true,
