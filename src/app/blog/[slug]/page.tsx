@@ -99,6 +99,17 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.description}
           </p>
 
+          {post.heroImage && (
+            <div className="glow-card mt-10 overflow-hidden rounded-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={post.heroImage}
+                alt={post.title}
+                className="h-auto w-full"
+              />
+            </div>
+          )}
+
           <div className="prose prose-invert mt-12 max-w-none prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:font-semibold prose-p:text-zinc-300 prose-p:leading-relaxed prose-li:text-zinc-300 prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline prose-code:rounded prose-code:bg-zinc-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:text-cyan-300 prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-xl prose-pre:border prose-pre:border-zinc-800 prose-pre:bg-zinc-950 prose-pre:text-sm prose-strong:text-white">
             <Content />
           </div>
