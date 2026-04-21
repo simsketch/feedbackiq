@@ -9,6 +9,7 @@ import ThemeSettings from "@/components/theme-settings";
 import RoadmapSettings from "@/components/roadmap-settings";
 import ChangelogSettings from "@/components/changelog-settings";
 import WidgetAppearanceSettings from "@/components/widget-appearance-settings";
+import CollapsibleSection from "@/components/collapsible-section";
 
 export default async function ProjectDetailPage({
   params,
@@ -90,35 +91,40 @@ export default async function ProjectDetailPage({
 
       <div className="space-y-8">
         <WidgetSnippet siteKey={project.siteKey} isGithubConnected={!!company?.githubInstallationId} />
-        <WidgetAppearanceSettings
-          projectId={project.id}
-          initialPosition={project.widgetPosition}
-          initialLabel={project.widgetLabel}
-          initialSize={project.widgetSize}
-          initialIcon={project.widgetIcon}
-          initialHeaderTitle={project.widgetHeaderTitle}
-          initialHeaderSubtitle={project.widgetHeaderSubtitle}
-          initialContentPlaceholder={project.widgetContentPlaceholder}
-          initialEmailPlaceholder={project.widgetEmailPlaceholder}
-          initialAttachText={project.widgetAttachText}
-          initialSubmitText={project.widgetSubmitText}
-          initialSuccessMessage={project.widgetSuccessMessage}
-          initialShowEmail={project.widgetShowEmail}
-          initialRequireEmail={project.widgetRequireEmail}
-          initialShowScreenshot={project.widgetShowScreenshot}
-        />
-        <ThemeSettings
-          projectId={project.id}
-          initialWebsiteUrl={project.websiteUrl}
-          initialTheme={{
-            primary: project.themePrimary,
-            background: project.themeBackground,
-            foreground: project.themeForeground,
-            fontFamily: project.themeFontFamily,
-            borderRadius: project.themeBorderRadius,
-          }}
-          initialUpdatedAt={project.themeUpdatedAt}
-        />
+        <CollapsibleSection
+          title="Widget & theme"
+          description="Appearance, copy, and brand colors for the embedded widget."
+        >
+          <WidgetAppearanceSettings
+            projectId={project.id}
+            initialPosition={project.widgetPosition}
+            initialLabel={project.widgetLabel}
+            initialSize={project.widgetSize}
+            initialIcon={project.widgetIcon}
+            initialHeaderTitle={project.widgetHeaderTitle}
+            initialHeaderSubtitle={project.widgetHeaderSubtitle}
+            initialContentPlaceholder={project.widgetContentPlaceholder}
+            initialEmailPlaceholder={project.widgetEmailPlaceholder}
+            initialAttachText={project.widgetAttachText}
+            initialSubmitText={project.widgetSubmitText}
+            initialSuccessMessage={project.widgetSuccessMessage}
+            initialShowEmail={project.widgetShowEmail}
+            initialRequireEmail={project.widgetRequireEmail}
+            initialShowScreenshot={project.widgetShowScreenshot}
+          />
+          <ThemeSettings
+            projectId={project.id}
+            initialWebsiteUrl={project.websiteUrl}
+            initialTheme={{
+              primary: project.themePrimary,
+              background: project.themeBackground,
+              foreground: project.themeForeground,
+              fontFamily: project.themeFontFamily,
+              borderRadius: project.themeBorderRadius,
+            }}
+            initialUpdatedAt={project.themeUpdatedAt}
+          />
+        </CollapsibleSection>
         <RoadmapSettings
           projectId={project.id}
           initialEnabled={project.publicRoadmap}
