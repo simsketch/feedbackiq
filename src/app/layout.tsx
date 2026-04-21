@@ -3,6 +3,7 @@ import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { DM_Sans, IBM_Plex_Mono } from "next/font/google";
+import { buildMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -17,10 +18,10 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
 });
 
-export const metadata: Metadata = {
-  title: "FeedbackIQ",
-  description: "User feedback, shipped as code",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "User feedback, shipped as code",
+  path: "/",
+});
 
 export default function RootLayout({
   children,
