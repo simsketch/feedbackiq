@@ -209,14 +209,53 @@ model PullRequest {
 }
 
 model WaitlistSignup {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  source    String?
-  referrer  String?
-  userAgent String?
-  ipHash    String?
-  createdAt DateTime @default(now())
+  id             String    @id @default(uuid())
+  email          String    @unique
+  source         String?
+  referrer       String?
+  userAgent      String?
+  ipHash         String?
+  unsubscribed   Boolean   @default(false)
+  unsubscribedAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  sends WaitlistSend[]
 
   @@index([createdAt])
+  @@index([unsubscribed])
+  @@schema("feedbackiq")
+}
+
+model WaitlistSend {
+  id             String   @id @default(uuid())
+  signupId       String
+  sequenceNumber Int
+  sentAt         DateTime @default(now())
+
+  signup WaitlistSignup @relation(fields: [signupId], references: [id], onDelete: Cascade)
+
+  @@unique([signupId, sequenceNumber])
+  @@index([sentAt])
+  @@schema("feedbackiq")
+}
+
+model BlogBroadcast {
+  id         String   @id @default(uuid())
+  slug       String   @unique
+  sentCount  Int      @default(0)
+  broadcastAt DateTime @default(now())
+
+  @@schema("feedbackiq")
+}
+
+model BlogCrosspost {
+  id          String   @id @default(uuid())
+  slug        String
+  platform    String
+  externalId  String?
+  externalUrl String?
+  createdAt   DateTime @default(now())
+
+  @@unique([slug, platform])
   @@schema("feedbackiq")
 }

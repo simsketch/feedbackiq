@@ -60,12 +60,25 @@ function toCsv(rows: Signup[]): string {
   return [header.join(","), ...body].join("\n");
 }
 
+interface DripResult {
+  ok: boolean;
+  subscribers?: number;
+  sent?: number;
+  errors?: number;
+  errorDetails?: Array<{ email: string; seq: number; message: string }>;
+  error?: string;
+}
+
 export default function AdminWaitlistClient() {
   const [data, setData] = useState<DataShape | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [dripStatus, setDripStatus] = useState<
+    "idle" | "running" | "done" | "error"
+  >("idle");
+  const [dripResult, setDripResult] = useState<DripResult | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -109,6 +122,29 @@ export default function AdminWaitlistClient() {
     });
   }, [data, query, sourceFilter]);
 
+  const runDrip = useCallback(async () => {
+    setDripStatus("running");
+    setDripResult(null);
+    try {
+      const res = await fetch("/api/admin/waitlist/run-drip", { method: "POST" });
+      const json = (await res.json()) as DripResult;
+      if (!res.ok) {
+        setDripResult({ ok: false, error: json.error ?? `HTTP ${res.status}` });
+        setDripStatus("error");
+        return;
+      }
+      setDripResult(json);
+      setDripStatus("done");
+      load();
+    } catch (err) {
+      setDripResult({
+        ok: false,
+        error: err instanceof Error ? err.message : "unknown",
+      });
+      setDripStatus("error");
+    }
+  }, [load]);
+
   const exportCsv = useCallback(() => {
     if (!data) return;
     const csv = toCsv(filtered);
@@ -150,6 +186,49 @@ export default function AdminWaitlistClient() {
         <StatCard label="Last 24h" value={data.summary.last24h} />
         <StatCard label="Last 7 days" value={data.summary.last7d} />
         <StatCard label="Unique sources" value={data.summary.uniqueSources} />
+      </div>
+
+      <div className="glow-card rounded-xl p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-white">Drip sequence</h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Manually runs the same job the cron runs daily at 13:00 UTC. Safe
+              to run repeatedly — idempotent per subscriber/issue.
+            </p>
+          </div>
+          <button
+            onClick={runDrip}
+            disabled={dripStatus === "running"}
+            className="btn-snake inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-2.5 text-sm font-medium text-black transition-all hover:brightness-110 disabled:opacity-60"
+          >
+            {dripStatus === "running" ? "Running…" : "Run drip now"}
+          </button>
+        </div>
+        {dripResult && (
+          <div className="mt-4 rounded-lg border border-zinc-800/60 bg-zinc-900/50 px-3 py-2 text-sm text-zinc-300">
+            {dripResult.ok ? (
+              <p>
+                Processed <strong>{dripResult.subscribers ?? 0}</strong>{" "}
+                subscribers, sent <strong>{dripResult.sent ?? 0}</strong>{" "}
+                emails, <strong>{dripResult.errors ?? 0}</strong> errors.
+              </p>
+            ) : (
+              <p className="text-red-400">
+                Drip failed: {dripResult.error ?? "unknown"}
+              </p>
+            )}
+            {(dripResult.errorDetails?.length ?? 0) > 0 && (
+              <ul className="mt-2 list-disc pl-5 text-xs text-zinc-400">
+                {dripResult.errorDetails!.slice(0, 5).map((e, i) => (
+                  <li key={i}>
+                    {e.email} · issue #{e.seq}: {e.message}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
