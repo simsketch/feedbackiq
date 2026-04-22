@@ -1,7 +1,3 @@
 {
-  "crons": [
-    { "path": "/api/cron/waitlist-drip", "schedule": "0 13 * * *" },
-    { "path": "/api/cron/blog-broadcast", "schedule": "15 * * * *" },
-    { "path": "/api/cron/devto-crosspost", "schedule": "0 14 * * 1" }
-  ]
+  "crons": []
 }
