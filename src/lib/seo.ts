@@ -7,6 +7,12 @@ export const SITE_DESCRIPTION =
 
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.png`;
 
+// Public social profiles used for Organization sameAs + future footer links.
+export const SOCIAL_LINKS = {
+  github: "https://github.com/simsketch/feedbackiq",
+  x: "https://x.com/feedbackiq",
+} as const;
+
 interface BuildMetadataArgs {
   title?: string;
   description?: string;
@@ -15,6 +21,8 @@ interface BuildMetadataArgs {
   type?: "website" | "article";
   publishedTime?: string;
   noIndex?: boolean;
+  rssFeedUrl?: string;
+  rssFeedTitle?: string;
 }
 
 export function buildMetadata({
@@ -25,16 +33,27 @@ export function buildMetadata({
   type = "website",
   publishedTime,
   noIndex,
+  rssFeedUrl,
+  rssFeedTitle,
 }: BuildMetadataArgs): Metadata {
   const fullTitle = title ? `${title} · ${SITE_NAME}` : SITE_NAME;
   const desc = description ?? SITE_DESCRIPTION;
   const canonical = `${SITE_URL}${path === "/" ? "" : path}`;
 
+  const alternates: Metadata["alternates"] = { canonical };
+  if (rssFeedUrl) {
+    alternates.types = {
+      "application/atom+xml": [
+        { url: rssFeedUrl, title: rssFeedTitle ?? `${SITE_NAME} feed` },
+      ],
+    };
+  }
+
   return {
     title: fullTitle,
     description: desc,
     metadataBase: new URL(SITE_URL),
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title: fullTitle,
       description: desc,
@@ -51,5 +70,49 @@ export function buildMetadata({
       images: [image],
     },
     ...(noIndex ? { robots: { index: false, follow: false } } : {}),
+  };
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  path: string;
+}
+
+export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path === "/" ? "" : item.path}`,
+    })),
+  };
+}
+
+export function organizationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    sameAs: Object.values(SOCIAL_LINKS),
+  };
+}
+
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
   };
 }

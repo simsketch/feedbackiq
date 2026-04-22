@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MarketingShell from "@/components/marketing-shell";
-import { buildMetadata, SITE_URL } from "@/lib/seo";
+import { buildMetadata, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import {
   competitors,
   getCompetitor,
@@ -64,6 +64,21 @@ function Cell({ value }: { value: CellValue }) {
   return <span className="text-sm text-zinc-300">{value}</span>;
 }
 
+function BreadcrumbSchema({ competitor }: { competitor: Competitor }) {
+  const schema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Compare", path: "/vs" },
+    { name: `vs. ${competitor.name}`, path: `/vs/${competitor.slug}` },
+  ]);
+  return (
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 function ComparisonSchema({ competitor }: { competitor: Competitor }) {
   const schema = {
     "@context": "https://schema.org",
@@ -96,6 +111,7 @@ export default async function ComparisonPage({ params }: PageProps) {
   return (
     <MarketingShell>
       <ComparisonSchema competitor={competitor} />
+      <BreadcrumbSchema competitor={competitor} />
       <section className="relative py-20 sm:py-28">
         <div
           className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] opacity-25"

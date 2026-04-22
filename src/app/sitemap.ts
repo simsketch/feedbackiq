@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/vs`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_URL}/blog/feed.xml`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
   ];
 
   const comparisonRoutes: MetadataRoute.Sitemap = competitors.map((c) => ({

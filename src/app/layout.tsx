@@ -3,7 +3,7 @@ import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { DM_Sans, IBM_Plex_Mono } from "next/font/google";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -38,6 +38,16 @@ export default function RootLayout({
           gtag('js', new Date());
           gtag('config', 'G-J3Q5ZW2PGP', { site: location.hostname });
         `}</Script>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [organizationJsonLd(), websiteJsonLd()],
+            }),
+          }}
+        />
       </head>
       <body
         className={`${dmSans.variable} ${plexMono.variable} antialiased noise-bg`}

@@ -1,0 +1,9 @@
+Contact: mailto:security@feedbackiq.app
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://feedbackiq.app/.well-known/security.txt
+
+# If you believe you've found a security vulnerability in FeedbackIQ,
+# please email security@feedbackiq.app. We'll respond within 72 hours.
+# Please do not publicly disclose the issue until we've had a chance to
+# address it. Coordinated disclosure only.

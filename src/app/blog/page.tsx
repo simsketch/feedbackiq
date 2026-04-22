@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import MarketingShell from "@/components/marketing-shell";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, SITE_URL } from "@/lib/seo";
 import { posts } from "@/content/blog";
 
 export const metadata: Metadata = buildMetadata({
@@ -9,6 +9,8 @@ export const metadata: Metadata = buildMetadata({
   description:
     "Technical posts from the FeedbackIQ team — how we build the pipeline from user feedback to shipped PRs.",
   path: "/blog",
+  rssFeedUrl: `${SITE_URL}/blog/feed.xml`,
+  rssFeedTitle: "FeedbackIQ Blog",
 });
 
 function formatDate(iso: string) {
@@ -40,6 +42,22 @@ export default function BlogIndex() {
             pipeline, the infra, and the decisions behind turning user feedback
             into merged code.
           </p>
+          <div className="mt-6 flex items-center justify-center">
+            <a
+              href="/blog/feed.xml"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 transition-colors hover:text-cyan-400"
+            >
+              <svg
+                className="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M4.5 3.75a.75.75 0 0 0 0 1.5 13.5 13.5 0 0 1 13.5 13.5.75.75 0 0 0 1.5 0A15 15 0 0 0 4.5 3.75Zm0 4.5a.75.75 0 0 0 0 1.5 9 9 0 0 1 9 9 .75.75 0 0 0 1.5 0 10.5 10.5 0 0 0-10.5-10.5Zm1.5 8.25a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />
+              </svg>
+              Subscribe via RSS
+            </a>
+          </div>
         </div>
       </section>
 
