@@ -69,6 +69,55 @@ function renderHtml(input: NotificationInput): string {
 </html>`;
 }
 
+export async function sendWaitlistWelcome(
+  to: string
+): Promise<{ sent: boolean; reason?: string }> {
+  const client = getClient();
+  if (!client) return { sent: false, reason: "RESEND_API_KEY not set" };
+
+  const { error } = await client.emails.send({
+    from: FROM,
+    to,
+    subject: "You're on the FeedbackIQ list",
+    html: waitlistHtml(),
+    text: waitlistText(),
+  });
+
+  if (error) return { sent: false, reason: error.message };
+  return { sent: true };
+}
+
+function waitlistHtml(): string {
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:#fafafa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#18181b;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <p style="font-size:13px;color:#71717a;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.06em;">FeedbackIQ</p>
+    <h1 style="font-size:24px;font-weight:600;line-height:1.3;margin:0 0 16px;">You're on the list.</h1>
+    <p style="font-size:15px;line-height:1.7;color:#3f3f46;margin:0 0 16px;">Thanks for signing up. We're building the tool that turns user feedback into real pull requests — drop a widget on your site, users tell you what to build, an AI agent reads your codebase and opens the PR.</p>
+    <p style="font-size:15px;line-height:1.7;color:#3f3f46;margin:0 0 16px;">Expect a short note when we open early access. In the meantime, we're writing about the build publicly:</p>
+    <p style="margin:24px 0 0;"><a href="https://feedbackiq.app/blog" style="display:inline-block;background:#0891b2;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:500;">Read the build log</a></p>
+    <hr style="border:0;border-top:1px solid #e4e4e7;margin:40px 0 16px;" />
+    <p style="font-size:12px;color:#a1a1aa;margin:0;">You're receiving this because you joined the FeedbackIQ waitlist. Reply to unsubscribe.</p>
+  </div>
+</body>
+</html>`;
+}
+
+function waitlistText(): string {
+  return [
+    "FeedbackIQ",
+    "",
+    "You're on the list.",
+    "",
+    "Thanks for signing up. We're building the tool that turns user feedback into real pull requests — drop a widget on your site, users tell you what to build, an AI agent reads your codebase and opens the PR.",
+    "",
+    "Expect a short note when we open early access. In the meantime, we're writing about the build publicly: https://feedbackiq.app/blog",
+    "",
+    "You're receiving this because you joined the FeedbackIQ waitlist. Reply to unsubscribe.",
+  ].join("\n");
+}
+
 function renderText(input: NotificationInput): string {
   const parts = [
     `${input.projectName} · Shipped`,

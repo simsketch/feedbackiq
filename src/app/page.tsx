@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { NavAuthLinks, AuthAwareCta } from "@/components/marketing-auth";
 import LogoMark from "@/components/logo-mark";
+import WaitlistForm from "@/components/waitlist-form";
 
 function Nav() {
   return (
@@ -23,6 +24,9 @@ function Nav() {
           <Link href="/blog" className="hidden text-sm text-zinc-400 transition-colors hover:text-white sm:block">
             Blog
           </Link>
+          <a href="#waitlist" className="hidden text-sm text-cyan-300 transition-colors hover:text-cyan-200 sm:block">
+            Waitlist
+          </a>
           <NavAuthLinks />
         </div>
       </div>
@@ -615,6 +619,37 @@ function Features() {
   );
 }
 
+function Waitlist() {
+  return (
+    <section id="waitlist" className="relative py-24 sm:py-32 border-t border-zinc-800/50">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(34,211,238,0.12) 0%, rgba(34,211,238,0) 70%)",
+        }}
+      />
+      <div className="relative mx-auto max-w-3xl px-6 text-center">
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-sm text-cyan-300">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400" style={{ animation: "pulse-dot 2s ease infinite" }} />
+          Early access opening soon
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
+          Be the first to ship feedback as code.
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-lg text-zinc-400">
+          Join the waitlist. We&rsquo;ll send one note when early access opens —
+          and in the meantime, you&rsquo;ll get our build log straight from the
+          team building it.
+        </p>
+        <div className="mt-10">
+          <WaitlistForm source="homepage-hero" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CTA() {
   return (
     <section className="relative py-24 sm:py-32 border-t border-zinc-800/50">
@@ -682,6 +717,7 @@ export default function Home() {
         <HowItWorks />
         <ScreenshotFeature />
         <Features />
+        <Waitlist />
         <CTA />
       </main>
       <Footer />
