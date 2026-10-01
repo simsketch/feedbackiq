@@ -31,12 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-J3Q5ZW2PGP" strategy="afterInteractive" />
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-VTMVLKR1ZQ" strategy="afterInteractive" />
         <Script id="gtag-init" strategy="afterInteractive">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-J3Q5ZW2PGP', { site: location.hostname });
+          gtag('config', 'G-VTMVLKR1ZQ', { site: location.hostname });
         `}</Script>
         <script
           type="application/ld+json"
